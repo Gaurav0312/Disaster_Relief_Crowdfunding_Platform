@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Heart, Search, Filter, AlertCircle,CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DonationModal from '@/components/DonationModal';
@@ -73,35 +73,89 @@ const scaleUp = {
 
 const UserMenu = ({ user, onSignOut }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  // Close menu when clicking outside or pressing Escape
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') setIsOpen(false);
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen]);
+
+  const toggleMenu = useCallback(() => setIsOpen(prev => !prev), []);
 
   return (
-    <div className="relative">
-      <button onClick={() => setIsOpen(!isOpen)} className="flex items-center">
+    <div className="relative" ref={menuRef}>
+      <button
+        onClick={toggleMenu}
+        className="flex items-center max-w-xs transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded-full"
+        aria-expanded={isOpen}
+        aria-haspopup="true"
+        aria-label="User menu"
+      >
         <img 
-          src={user.image || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.name)} 
-          alt={user.name} 
-          className="w-8 h-8 rounded-full"
+          src={user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`} 
+          alt={user.name}
+          className="w-9 h-9 rounded-full border-2 border-white shadow-sm"
+          width={36}
+          height={36}
+          loading="lazy"
         />
-        <span className="ml-2 hidden md:inline">{user.name}</span>
+        <span className="ml-2 hidden md:inline font-medium text-gray-800 truncate max-w-[120px]">
+          {user.name}
+        </span>
       </button>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50"
-        >
-          <div className="px-4 py-2 text-sm text-gray-700 border-b">
-            <div className="font-medium">{user.name}</div>
-            <div className="text-gray-500 truncate">{user.email}</div>
-          </div>
-          <button 
-            onClick={onSignOut} 
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 divide-y divide-gray-100"
           >
-            Sign Out
-          </button>
-        </motion.div>
-      )}
+            <div className="px-4 py-3">
+              <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
+              <p className="text-xs text-gray-700 truncate mt-0.5">{user.email}</p>
+            </div>
+            
+            <div className="py-1">
+              <button 
+                onClick={() => {
+                  setIsOpen(false);
+                  onSignOut();
+                }}
+                className="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 focus:outline-none focus:bg-gray-50"
+                aria-label="Sign out"
+              >
+                <div className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  Sign Out
+                </div>
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -1,22 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
-import { 
-  AlertCircle, 
-  Share2, 
-  Heart, 
-  MapPin, 
-  Clock, 
-  Users,
-  Eye
-} from 'lucide-react';
-import {
-  FacebookShareButton,
-  FacebookIcon,
-  TwitterShareButton,
-  TwitterIcon,
-  WhatsappShareButton,
-  WhatsappIcon
+import { AlertCircle,  Share2,  Heart,  MapPin,  Clock,  Users} from 'lucide-react';
+import { FacebookShareButton, FacebookIcon, TwitterShareButton, TwitterIcon, WhatsappShareButton, WhatsappIcon
 } from 'react-share';
 import DonationModal from '@/components/DonationModal';
 
@@ -47,13 +33,34 @@ const ProjectCard = ({ project, onDonateClick, onViewClick }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleDonate = () => {
+  const handleDonate = (e) => {
+    e.stopPropagation();
     setIsDonationModalOpen(true);
     onDonateClick(project);
   };
 
   const handleModalClose = () => {
     setIsDonationModalOpen(false);
+  };
+
+  const handleViewClick = (e) => {
+    e.stopPropagation();
+    onViewClick(project.id);
+  };
+
+  const handleShareClick = (e) => {
+    e.stopPropagation();
+    setShowShareDropdown(!showShareDropdown);
+  };
+
+  const handleHeartClick = (e) => {
+    e.stopPropagation();
+    console.log('Heart clicked for project:', project.id);
+  };
+
+  // Main card click handler
+  const handleCardClick = () => {
+    onViewClick(project.id);
   };
 
   const getProgressPercentage = (raised, goal) => {
@@ -77,7 +84,8 @@ const ProjectCard = ({ project, onDonateClick, onViewClick }) => {
         animate={inView ? "visible" : "hidden"}
         variants={itemVariants}
         whileHover={{ y: -5 }}
-        className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200"
+        onClick={handleCardClick}
+        className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 cursor-pointer"
       >
         <div className="relative">
           <div className="h-48 relative overflow-hidden">
@@ -93,7 +101,10 @@ const ProjectCard = ({ project, onDonateClick, onViewClick }) => {
             )}
           </div>
           
-          <button className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-md hover:bg-red-100 transition-colors">
+          <button 
+            onClick={handleHeartClick}
+            className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-md hover:bg-red-100 transition-colors"
+          >
             <Heart size={20} className="text-gray-600 hover:text-red-500" />
           </button>
         </div>
@@ -150,29 +161,26 @@ const ProjectCard = ({ project, onDonateClick, onViewClick }) => {
               Donate Now
             </button>
 
-            <button 
-              onClick={() => onViewClick(project.id)}
-              className="bg-white border border-gray-300 hover:bg-gray-50 rounded-xl p-3"
-            >
-              <Eye size={18} className="text-gray-600" />
-            </button>
-
             <div className="relative" ref={shareContainerRef}>
               <button 
                 className="bg-white border border-gray-300 hover:bg-gray-50 rounded-xl p-3"
-                onClick={() => setShowShareDropdown(!showShareDropdown)}
+                onClick={handleShareClick}
               >
                 <Share2 size={18} className="text-gray-600" />
               </button>
               
               {showShareDropdown && (
-                <div className="absolute right-0 bottom-full mb-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 p-2 z-10">
+                <div 
+                  className="absolute right-0 bottom-full mb-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 p-2 z-10"
+                  onClick={(e) => e.stopPropagation()} 
+                >
                   <div className="flex justify-between p-2">
                     <FacebookShareButton
                       url={projectUrl}
                       quote={`Check out this project: ${project.title}`}
                       hashtag="#DisasterRelief"
                       className="transition-transform hover:scale-110"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <FacebookIcon size={32} round />
                     </FacebookShareButton>
@@ -182,6 +190,7 @@ const ProjectCard = ({ project, onDonateClick, onViewClick }) => {
                       title={`Support ${project.title}`}
                       hashtags={["DisasterRelief", "Crowdfunding"]}
                       className="transition-transform hover:scale-110"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <TwitterIcon size={32} round />
                     </TwitterShareButton>
@@ -191,6 +200,7 @@ const ProjectCard = ({ project, onDonateClick, onViewClick }) => {
                       title={`Help support ${project.title}`}
                       separator=" "
                       className="transition-transform hover:scale-110"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <WhatsappIcon size={32} round />
                     </WhatsappShareButton>

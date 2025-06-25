@@ -161,6 +161,7 @@ const UserMenu = ({ user, onSignOut }) => {
 };
 
 const DisasterReliefCrowdfunding = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
   const [showLaunchModal, setShowLaunchModal] = useState(false);
@@ -189,6 +190,32 @@ const DisasterReliefCrowdfunding = () => {
   const sampleProjects = [
     {
       id: 1,
+      title: "Surat Monsoon Flood Relief",
+      category: "flood",
+      location: "Surat, Gujarat",
+      description: "Urgent relief for families affected by severe monsoon flooding in Surat city. Over 280mm rainfall in 48 hours caused widespread inundation.",
+      goal: 85000,
+      raised: 42800,
+      donors: 876,
+      daysLeft: 12,
+      urgent: true,
+      imageUrl: "/SuratFlood1.jpg"
+    },
+    {
+      id: 2,
+      title: "Ahmedabad Air India Crash Relief",
+      category: "aviation",
+      location: "Ahmedabad, Gujarat",
+      description: "Emergency support for families affected by the catastrophic Air India Flight 171 crash. Providing immediate financial assistance, medical care, and psychological counseling.",
+      goal: 150000,
+      raised: 98750,
+      donors: 2340,
+      daysLeft: 45,
+      urgent: true,
+      imageUrl: "/AhmedabadCrash1.webp"
+    },
+    {
+      id: 3,
       title: "Delhi Earthquake Relief",
       category: "earthquake",
       location: "Delhi, India",
@@ -198,10 +225,10 @@ const DisasterReliefCrowdfunding = () => {
       donors: 202,
       daysLeft: 2,
       urgent: true,
-      imageUrl: "https://media.istockphoto.com/id/526197979/photo/repairing-electric-cables.jpg?s=612x612&w=0&k=20&c=wpy8iQ6l41eY4W_LzhNWoEWwe-VULBoxqpW3DvpFP7w="
+      imageUrl: "/DelhiEarthquake1.jpg"
     },
     {
-      id: 2,
+      id: 4,
       title: "Assam Flood Recovery",
       category: "flood",
       location: "Assam, India",
@@ -211,10 +238,10 @@ const DisasterReliefCrowdfunding = () => {
       donors: 1560,
       daysLeft: 25,
       urgent: true,
-      imageUrl: "https://media.istockphoto.com/id/1993213039/photo/aerial-view-of-small-town-been-flooded-countryside-neighbourhood-in-silchar-assam-india-barak.jpg?s=612x612&w=0&k=20&c=mRVHFNyJAzn66volBINsi2sZu4yYN_17KlM2xnP0Wew="
+      imageUrl: "/Assamphoto1.jpg"
     },
     {
-      id: 3,
+      id: 5,
       title: "Uttarakhand Wildfire Victims",
       category: "wildfire",
       location: "Uttarakhand, India",
@@ -224,10 +251,10 @@ const DisasterReliefCrowdfunding = () => {
       donors: 932,
       daysLeft: 42,
       urgent: false,
-      imageUrl: "https://media.istockphoto.com/id/2165831064/photo/panoramic-shot-of-illuminated-trees-against-sky-at-night.jpg?s=612x612&w=0&k=20&c=XUaOaPUfYAwqGshcztb6zwMn34wQVkpX5YQjXS-biUY="
+      imageUrl: "/UttarakhandWildfire1.jpg"
     },
     {
-      id: 4,
+      id: 6,
       title: "Kerala Flood Relief",
       category: "flood",
       location: "Kerala, India",
@@ -237,10 +264,10 @@ const DisasterReliefCrowdfunding = () => {
       donors: 487,
       daysLeft: 8,
       urgent: true,
-      imageUrl: "https://media.istockphoto.com/id/1128448061/photo/townsville-flood-natural-disaster.jpg?s=612x612&w=0&k=20&c=xkEXFF0VH2mJviwUpMhKpgYms6jqrD6U-eXSZOAUkts="
+      imageUrl: "/KeralaFlood1.jpg"
     },
     {
-      id: 5,
+      id: 7,
       title: "Himanchal Land Slide",
       category: "landslide",
       location: "Himachal Pradesh, India",
@@ -250,7 +277,7 @@ const DisasterReliefCrowdfunding = () => {
       donors: 1245,
       daysLeft: 21,
       urgent: true,
-      imageUrl: "https://www.godigit.com/content/dam/godigit/directportal/en/Natural-Disasters-in-India.jpg"
+      imageUrl: "/HimachalPhoto1.jpg"
     },
   ];
 
@@ -292,7 +319,7 @@ const DisasterReliefCrowdfunding = () => {
 };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 relative overflow-hidden">
       {/* Background Pattern with animation */}
       <motion.div 
         initial={{ opacity: 0 }}
@@ -362,79 +389,62 @@ const DisasterReliefCrowdfunding = () => {
                 </motion.div>
                 <h1 className="ml-3 text-2xl font-bold text-gray-900">Relief Fund</h1></Link>
               </div>
-              
-              <nav className="hidden md:flex space-x-8">
-                 <button
-                  onClick={() => handleTabChange('browse')}
-                  className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white"
-                >
-                  Browse
-                </button>
-  
-                  <button
-                  onClick={() => handleTabChange('emergency')}
-                  className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white"
-                >
-                  Emergency
-                </button>
 
-                {/* Add About Us button separately */}
-                <button
-                 onClick={() => setShowAboutModal(true)}
-                 className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white"
-                >
-                 About Us
-                </button>
+              {/* Desktop Menu */}
+             <nav className="hidden md:flex space-x-8">
+              <button onClick={() => handleTabChange('browse')} className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white">Browse</button>
+              <button onClick={() => handleTabChange('emergency')} className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white">Emergency</button>
+              <button onClick={() => setShowAboutModal(true)} className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white">About Us</button>
+              <button onClick={() => setShowCreateModal(true)} className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white">Create Campaign</button>
+              {status === 'authenticated' && (
+              <button onClick={() => handleTabChange('dashboard')} className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white">Dashboard</button>
+              )}
+             </nav>
 
-                {/* Create Campaign Button */}
-                <button
-                  onClick={() => setShowCreateModal(true)}
-                  className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white"
-                >
-                  Create Campaign
-                </button>
-
-                {/* Add Dashboard tab for authenticated users */}
-                {status === 'authenticated' && (
-                 <button
-                  onClick={() => handleTabChange('dashboard')}
-                  onDashboardClick={() => setActiveTab('dashboard')}
-                  className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white :'text-gray-700 hover:text-blue-600' "
-                 >
-                 Dashboard
-                 </button>
-               )}
-              </nav>
+             {/* Mobile Menu Button */}
+              <div className="md:hidden">
+               <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+               <svg className="w-7 h-7 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+               </svg>
+               </button>
+              </div>
             
               {/* User Actions */}
-              <div className="flex items-center space-x-2">
-                {status === 'authenticated' ? (
-                  <>
-                    <UserMenu 
-                      user={session.user} 
-                      onSignOut={() => signOut({ callbackUrl: '/' })}
-                    />
-                  </>
+              <div className="hidden md:flex items-center space-x-2">
+               {status === 'authenticated' ? (
+               <UserMenu user={session.user} onSignOut={() => signOut({ callbackUrl: '/' })} />
                 ) : status === 'loading' ? (
-                  <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
+               <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
                 ) : (
-                  <>
-                    <button 
-                      onClick={() => setShowSignInModal(true)}
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium"
-                    >
-                      Sign In
-                    </button>
-                    <button 
-                      onClick={() => setShowSignInModal(true)}
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium"
-                    >
-                      Register
-                    </button>
-                  </>
+                <>
+               <button onClick={() => setShowSignInModal(true)} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium">Sign In</button>
+               <button onClick={() => setShowSignInModal(true)} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium">Register</button>
+                </>
                 )}
-              </div>
-            </div>
+               </div>
+             </div>
+
+             {/* Mobile Menu Items */}
+    {isMobileMenuOpen && (
+      <div className="flex flex-col space-y-4 mt-4 md:hidden">
+        <button onClick={() => { handleTabChange('browse'); setIsMobileMenuOpen(false); }} className="text-gray-900 bg-gray-100 py-2 rounded-lg">Browse</button>
+        <button onClick={() => { handleTabChange('emergency'); setIsMobileMenuOpen(false); }} className="text-gray-900 bg-gray-100 py-2 rounded-lg">Emergency</button>
+        <button onClick={() => { setShowAboutModal(true); setIsMobileMenuOpen(false); }} className="text-gray-900 bg-gray-100 py-2 rounded-lg">About Us</button>
+        <button onClick={() => { setShowCreateModal(true); setIsMobileMenuOpen(false); }} className="text-gray-900 bg-gray-100 py-2 rounded-lg">Create Campaign</button>
+        {status === 'authenticated' && (
+          <button onClick={() => { handleTabChange('dashboard'); setIsMobileMenuOpen(false); }} className="text-gray-900 bg-gray-100 py-2 rounded-lg">Dashboard</button>
+        )}
+
+        {/* Mobile User Buttons */}
+        {status !== 'authenticated' && status !== 'loading' && (
+          <div className="flex flex-col space-y-2 mt-2">
+            <button onClick={() => { setShowSignInModal(true); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">Sign In</button>
+            <button onClick={() => { setShowSignInModal(true); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">Register</button>
+          </div>
+        )}
+      </div>
+    )}
           </div>
         </motion.header>
 
@@ -505,7 +515,7 @@ const DisasterReliefCrowdfunding = () => {
         </motion.section>
 
         {/* Main Content with animated transitions between tabs */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <main className="max-w mx-auto px-4 sm:px-6 lg:px-8 pb-20">
           <AnimatePresence mode="wait">
             {activeTab === 'browse' && (
               <motion.div

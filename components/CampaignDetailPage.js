@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Heart, Share2, MapPin, Calendar, Users, CheckCircle, AlertTriangle, Camera, FileText, TrendingUp, Clock, Leaf, Anchor,GraduationCap, Phone, Mail, Shield, Home, Zap, Droplets, Mountain, Flame, Activity, Package, Truck, ExternalLink,} from 'lucide-react';
+import { ArrowLeft, Heart, Share2, MapPin, Calendar, Users, CheckCircle, AlertTriangle, Camera, FileText, TrendingUp, Clock, Leaf, Anchor,GraduationCap, Phone, Mail, Shield, Home, Zap, Droplets, Mountain, Flame, Activity, Package,Globe, Truck, ExternalLink,} from 'lucide-react';
 import DonationModal from '@/components/DonationModal';
 
 const CampaignDetailPage = ({ campaignId, onBack }) => {
@@ -10,8 +10,223 @@ const CampaignDetailPage = ({ campaignId, onBack }) => {
   const [activeTab, setActiveTab] = useState('overview');
 
 const campaignData = {
-    1: {
-        id: 1,
+  1: {
+    id: 1,
+    title: "Surat Monsoon Flood Relief",
+    category: "flood",
+    location: "Surat, Gujarat",
+    shortDescription: "Urgent relief for families affected by severe monsoon flooding in Surat city.",
+    description: `Surat, Gujarat's commercial hub, is experiencing severe flooding following unprecedented monsoon rains that began on June 23, 2025. The city has received over 280mm of rainfall in just 48 hours, causing the Tapi River and its tributaries to overflow and inundate vast areas of the city.
+
+    The flooding has severely affected over 450,000 residents across 15 wards of Surat city, with the worst-hit areas including Dabholi, Varachha, Sarthana, Katargam, and Rander. More than 25,000 families have been evacuated from low-lying areas as floodwaters reached dangerous levels in residential neighborhoods.
+
+    The diamond and textile industries, which form the backbone of Surat's economy, have been severely impacted with hundreds of manufacturing units submerged. The flooding has also damaged critical infrastructure including the civil hospital, railway station, major roads, and the city's drainage system, causing widespread disruption to daily life.
+
+    Educational institutions, including schools and colleges, have been closed indefinitely as many buildings are being used as temporary relief shelters. The flooding has also raised concerns about waterborne diseases as sewage systems have been overwhelmed and contaminated floodwater has entered residential areas.
+
+    Our emergency response focuses on immediate evacuation, providing safe shelter, medical assistance, food distribution, clean water supply, and sanitation facilities. We're working closely with the Surat Municipal Corporation, Gujarat State Disaster Management Authority, and local volunteer organizations.
+
+    Your contribution will help provide life-saving emergency aid, temporary accommodation, medical care, clean water, food supplies, and support for businesses and families to rebuild their lives after the waters recede.`,
+    goal: 85000,
+    raised: 42800,
+    donors: 876,
+    daysLeft: 12,
+    urgent: true,
+    verified: true,
+    dateCreated: "June 24, 2025",
+    lastUpdate: "30 minutes ago",
+    imageUrl: "/SuratFlood1.jpg",
+    gallery: [
+        "/SuratFlood1.jpg",
+        "/SuratFlood2.jpg",
+        "/SuratFlood3.jpg",
+        "/SuratFlood4.jpg"
+    ],
+    updates: [
+        { 
+            date: "June 25, 2025", 
+            time: "4:45 PM",
+            title: "Water Levels Receding in Central Areas", 
+            content: "Water levels are slowly receding in central Surat areas. However, Dabholi and Varachha remain severely flooded. 850 rescue boats are actively evacuating stranded residents from these areas.",
+        },
+        { 
+            date: "June 25, 2025", 
+            time: "11:30 AM",
+            title: "Medical Emergency Centers Established", 
+            content: "15 mobile medical units and 8 emergency medical centers have been established in relief camps. Priority focus on preventing waterborne diseases with over 1,200 medical consultations provided so far.",
+        },
+        { 
+            date: "June 24, 2025", 
+            time: "8:15 PM",
+            title: "Mass Evacuation Operations Continue", 
+            content: "Large-scale evacuation operations continue with NDRF, SDRF, and local rescue teams. Over 25,000 people have been moved to 45 relief camps across the city. Food distribution reaching 15,000 families daily.",
+        },
+        { 
+            date: "June 24, 2025", 
+            time: "2:30 PM",
+            title: "Industrial Area Assessment", 
+            content: "Assessment teams are surveying flooded industrial areas in Pandesara and Sachin. Over 400 diamond and textile units are submerged, affecting thousands of workers. Emergency livelihood support being planned.",
+        },
+        { 
+            date: "June 24, 2025", 
+            time: "6:00 AM",
+            title: "Emergency Response Activated", 
+            content: "Declared municipal emergency as floodwaters entered residential areas. Mayor Dakshesh Mavani coordinating rescue operations. All schools and colleges converted to relief centers.",
+        }
+    ],
+    impactStats: [
+        { label: "People Evacuated", value: "25,000+", icon: Users, color: "blue" },
+        { label: "Relief Camps", value: "45", icon: Home, color: "purple" },
+        { label: "Rescue Boats", value: "850+", icon: Anchor, color: "orange" },
+        { label: "Daily Meals", value: "45,000+", icon: Package, color: "green" }
+    ],
+    emergencyDetails: {
+        floodStart: "June 23, 2025",
+        rainfall: "280mm in 48 hours",
+        wardsAffected: "15 out of 25",
+        affectedPopulation: "450,000+",
+        evacuatedFamilies: "25,000+",
+        industrialUnits: "400+ submerged",
+        roadsBlocked: "85+ major roads",
+        railwayDisruption: "Complete shutdown",
+        hospitalsDamaged: "3 major hospitals",
+        schoolsClosed: "180+"
+    },
+    reliefEfforts: [
+        { item: "Emergency Food Packets", distributed: "45,000", target: "100,000" },
+        { item: "Clean Water (liters)", distributed: "850,000", target: "2,000,000" },
+        { item: "Rescue Boats Deployed", distributed: "850", target: "1,200" },
+        { item: "Relief Camp Beds", distributed: "35,000", target: "50,000" },
+        { item: "Medical Kits", distributed: "1,500", target: "3,000" }
+    ],
+    organizer: {
+        name: "Surat Flood Relief Coordination Committee",
+        verified: true,
+        description: "A joint initiative of Surat Municipal Corporation, local NGOs, and business associations with extensive experience in urban flood management. Officially recognized by Gujarat State Disaster Management Authority and supported by diamond and textile industry associations.",
+        contact: "emergency@suratfloodrelief.org",
+        phone: "+91-261-234-5678",
+        registration: "NGO/2020/GUJ/67890",
+        website: "www.suratfloodrelief.org",
+        socialMedia: {
+            twitter: "@SuratFloodRelief",
+            facebook: "SuratFloodReliefCommittee",
+            instagram: "@suratfloodrelieforg"
+        }
+    }
+},
+
+  2: {
+    id: 2,
+    title: "Ahmedabad Air India Crash Relief",
+    category: "aviation",
+    location: "Ahmedabad, Gujarat",
+    shortDescription: "Emergency support for families affected by the catastrophic Air India Flight 171 crash.",
+    description: `On June 12, 2025, at 8:47 AM IST, Air India Flight 171, a Boeing 787-8 Dreamliner bound for London Gatwick, crashed moments after takeoff from Sardar Vallabhbhai Patel International Airport in Ahmedabad. The aircraft, carrying 242 people (230 passengers and 12 crew members), crashed into a medical college hostel building, creating one of India's worst aviation disasters in over a decade.
+
+    The catastrophic crash resulted in 241 fatalities aboard the aircraft, with only one survivor - Vishwash Kumar Ramesh, a British national who miraculously walked away with minor injuries. The impact also killed at least 39 people in the hostel buildings and injured over 60 others on the ground, bringing the total death toll to approximately 280 people.
+
+    The passengers included 169 Indian nationals, 53 British nationals, 7 Portuguese nationals, and 1 Canadian national. Many were families heading to London for vacation, business travelers, and students pursuing higher education abroad. The crash site, spread across several acres, has made body recovery operations extremely challenging.
+
+    Our comprehensive relief program provides immediate support to families of victims, medical care for survivors and ground casualties, temporary accommodation for displaced hostel residents, psychological counseling, and assistance with repatriation procedures for international victims' families.
+
+    Your donation will help provide emergency financial assistance to bereaved families, medical treatment for injured survivors, funeral arrangements, legal support for compensation claims, and long-term psychological rehabilitation for the affected community.`,
+    goal: 150000,
+    raised: 98750,
+    donors: 2340,
+    daysLeft: 45,
+    urgent: true,
+    verified: true,
+    dateCreated: "June 13, 2025",
+    lastUpdate: "1 hour ago",
+    imageUrl: "/AhmedabadCrash1.webp",
+    gallery: [
+        "/AhmedabadCrash1.webp",
+        "/AhmedabadCrash2.webp",
+        "/AhmedabadCrash3.jpg",
+        "/AhmedabadCrash4.jpg"
+    ],
+    updates: [
+        { 
+            date: "June 25, 2025", 
+            time: "9:15 AM",
+            title: "International Family Support Center Operational", 
+            content: "A dedicated support center for international families has been established at Ahmedabad airport. Consular officials from UK, Portugal, and Canada are providing visa assistance and repatriation support for 61 international families.",
+        },
+        { 
+            date: "June 24, 2025", 
+            time: "6:30 PM",
+            title: "Compensation Distribution Begins", 
+            content: "Started distributing immediate relief compensation of ₹5 lakhs to each affected family. Special assistance teams are helping families navigate insurance claims and legal procedures for additional compensation.",
+        },
+        { 
+            date: "June 23, 2025", 
+            time: "11:45 AM",
+            title: "Memorial Service Held", 
+            content: "A memorial service was held for all 280 victims at the crash site. The service was attended by family members, government officials, and airline representatives. A permanent memorial is being planned.",
+        },
+        { 
+            date: "June 22, 2025", 
+            time: "4:20 PM",
+            title: "Psychological Support Expanded", 
+            content: "Expanded psychological support services to include 24/7 counseling hotline and mobile crisis intervention teams. Over 150 family members and survivors are receiving specialized trauma therapy.",
+        },
+        { 
+            date: "June 20, 2025", 
+            time: "7:00 AM",
+            title: "Body Recovery Operations", 
+            content: "Recovery operations have identified 270 bodies so far. Forensic teams are working with international experts to ensure proper identification. DNA analysis is being conducted for severely damaged remains.",
+        },
+        { 
+            date: "June 15, 2025", 
+            time: "3:30 PM",
+            title: "Emergency Response Activated", 
+            content: "Immediate emergency response teams deployed to crash site. Survivor Vishwash Kumar hospitalized with minor injuries. Emergency helpline established for families seeking information about passengers.",
+        }
+    ],
+    impactStats: [
+        { label: "Families Assisted", value: "280+", icon: Users, color: "blue" },
+        { label: "Counseling Sessions", value: "450+", icon: Heart, color: "red" },
+        { label: "International Cases", value: "61", icon: Globe, color: "green" },
+        { label: "Medical Treatments", value: "95+", icon: Activity, color: "purple" }
+    ],
+    emergencyDetails: {
+        dateOfCrash: "June 12, 2025, 8:47 AM IST",
+        aircraft: "Boeing 787-8 Dreamliner",
+        flightNumber: "AI 171",
+        destination: "London Gatwick",
+        onboardFatalities: "241 out of 242",
+        groundFatalities: "39+",
+        groundInjured: "60+",
+        totalPassengers: "230",
+        crewMembers: "12",
+        survivors: "1 (Vishwash Kumar Ramesh)",
+        crashSite: "Medical College Hostel",
+        causeOfCrash: "Under Investigation"
+    },
+    reliefEfforts: [
+        { item: "Immediate Relief Compensation", distributed: "150", target: "280" },
+        { item: "International Repatriation Cases", distributed: "25", target: "61" },
+        { item: "Psychological Counseling Sessions", distributed: "450", target: "1000" },
+        { item: "Medical Treatment Cases", distributed: "95", target: "150" },
+        { item: "Legal Assistance Cases", distributed: "180", target: "280" }
+    ],
+    organizer: {
+        name: "Gujarat Aviation Disaster Relief Trust",
+        verified: true,
+        description: "A specialized emergency response organization established in collaboration with the Gujarat State Government, Airport Authority of India, and international aviation safety organizations. Experienced in aviation disaster management and victim assistance.",
+        contact: "emergency@gujarataviationrelief.org",
+        phone: "+91-79-2345-6789",
+        registration: "TRUST/2025/GUJ/56789",
+        website: "www.gujarataviationrelief.org",
+        socialMedia: {
+            twitter: "@GujaratAviationRelief",
+            facebook: "GujaratAviationDisasterRelief",
+            instagram: "@gujarataviationrelieforg"
+        }
+    }
+},
+    3: {
+        id: 3,
         title: "Delhi Earthquake Relief",
         category: "earthquake",
         location: "Delhi, India",
@@ -106,8 +321,8 @@ const campaignData = {
             }
         }
     },
-    2: {
-        id: 2,
+    4: {
+        id: 4,
         title: "Assam Flood Recovery",
         category: "flood",
         location: "Assam, India",
@@ -194,8 +409,8 @@ const campaignData = {
             }
         }
     },
-    3: {
-    id: 3,
+    5: {
+    id: 5,
     title: "Uttarakhand Wildfire Victims",
     category: "wildfire",
     location: "Uttarakhand, India",
@@ -289,7 +504,7 @@ const campaignData = {
         }
     }
 },
-   4: {
+   6: {
     id: 4,
     title: "Kerala Flood Relief",
     category: "flood",
@@ -384,8 +599,8 @@ const campaignData = {
         }
     }
 },
-    5: {
-    id: 5,
+    7: {
+    id: 7,
     title: "Himachal Landslide Relief",
     category: "landslide",
     location: "Himachal Pradesh, India",
@@ -449,7 +664,6 @@ const campaignData = {
     impactStats: [
         { label: "People Helped", value: "1,800+", icon: Users, color: "blue" },
         { label: "Villages Reached", value: "15", icon: MapPin, color: "green" },
-        { label: "Helicopter Rescues", value: "165+", icon: Helicopter, color: "orange" },
         { label: "Relief Camps", value: "6", icon: Home, color: "purple" }
     ],
     emergencyDetails: {

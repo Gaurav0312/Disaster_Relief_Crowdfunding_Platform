@@ -88,7 +88,7 @@ const ProjectCard = ({ project, onDonateClick, onViewClick }) => {
         className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 cursor-pointer"
       >
         <div className="relative">
-          <div className="h-48 relative overflow-hidden">
+          <div className="h-48 sm:h-56 md:h-48 relative overflow-hidden">
             <img 
               src={project.imageUrl} 
               alt={project.title} 
@@ -103,28 +103,27 @@ const ProjectCard = ({ project, onDonateClick, onViewClick }) => {
           
           <button 
             onClick={handleHeartClick}
-            className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-md hover:bg-red-100 transition-colors"
-          >
+            className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-md hover:bg-red-100 transition-colors" >
             <Heart size={20} className="text-gray-600 hover:text-red-500" />
           </button>
         </div>
         
-        <div className="p-6">
+        <div className="p-4 sm:p-6 flex flex-col flex-1 justify-between">
           <div className="flex justify-between items-start mb-2">
-            <h3 className="text-xl font-bold text-gray-800">{project.title}</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-gray-800">{project.title}</h3>
             <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
               {project.category}
             </span>
           </div>
           
-          <p className="text-gray-600 mb-4 line-clamp-2">{project.description}</p>
+          <p className="text-gray-600 mb-4 line-clamp-2 text-sm sm:text-base">{project.description}</p>
           
-          <div className="flex items-center text-gray-600 mb-2">
+          <div className="flex items-center text-gray-600 mb-2 text-sm">
             <MapPin size={16} className="mr-1 text-blue-500" />
             <span className="text-sm">{project.location}</span>
           </div>
           
-          <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
+          <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600 mb-4">
             <div className="flex items-center">
               <Clock size={16} className="mr-1 text-purple-500" />
               <span>{project.daysLeft} days left</span>
@@ -144,13 +143,9 @@ const ProjectCard = ({ project, onDonateClick, onViewClick }) => {
             />
           </div>
           
-          <div className="flex justify-between text-sm mb-6">
-            <div className="font-medium text-gray-700">
-              {formatCurrency(project.raised)} raised
-            </div>
-            <div className="text-gray-500">
-              of {formatCurrency(project.goal)}
-            </div>
+          <div className="flex justify-between text-sm sm:text-sm mb-6">
+            <div className="font-medium text-gray-700"> {formatCurrency(project.raised)} raised</div>
+            <div className="text-gray-500"> of {formatCurrency(project.goal)}</div>
           </div>
           
           <div className="flex justify-between gap-3">

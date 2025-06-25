@@ -225,7 +225,7 @@ const DisasterReliefCrowdfunding = () => {
       donors: 202,
       daysLeft: 2,
       urgent: true,
-      imageUrl: "/DelhiEarthquake1.jpg"
+      imageUrl: "/Delhiearthquake1.jpg"
     },
     {
       id: 4,

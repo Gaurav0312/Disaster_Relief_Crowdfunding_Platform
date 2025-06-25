@@ -246,12 +246,12 @@ const campaignData = {
         verified: true,
         dateCreated: "June 16, 2025",
         lastUpdate: "2 hours ago",
-        imageUrl: "/DelhiEarthquake1.jpg",
+        imageUrl: "/Delhiearthquake1.jpg",
         gallery: [
-          "/DelhiEarthquake1.jpg",
-          "/DelhiEarthquake2.jpg", 
-          "/DelhiEarthquake3.jpg", 
-          "/DelhiEarthquake4.jpg"
+          "/Delhiearthquake1.jpg",
+          "/Delhiearthquake2.jpg", 
+          "/Delhiearthquake3.jpg", 
+          "/Delhiearthquake4.jpg"
         ],
         updates: [
           { 

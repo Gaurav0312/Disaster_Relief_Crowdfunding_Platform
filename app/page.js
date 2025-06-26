@@ -89,11 +89,13 @@ const UserMenu = ({ user, onSignOut }) => {
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
       document.addEventListener('keydown', handleEscape);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
   }, [isOpen]);
@@ -102,9 +104,10 @@ const UserMenu = ({ user, onSignOut }) => {
 
   return (
     <div className="relative" ref={menuRef}>
+      {/* Mobile: Always show name next to avatar */}
       <button
         onClick={toggleMenu}
-        className="flex items-center max-w-xs transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded-full"
+        className="flex items-center max-w-xs transition-opacity hover:opacity-90 focus:outline-none rounded-full p-1"
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-label="User menu"
@@ -112,14 +115,22 @@ const UserMenu = ({ user, onSignOut }) => {
         <img 
           src={user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`} 
           alt={user.name}
-          className="w-9 h-9 rounded-full border-2 border-white shadow-sm"
-          width={36}
-          height={36}
+          className="w-10 h-10 sm:w-9 sm:h-9 rounded-full border-2 border-white shadow-sm"
+          width={40}
+          height={40}
           loading="lazy"
         />
-        <span className="ml-2 hidden md:inline font-medium text-gray-800 truncate max-w-[120px]">
+        <span className="ml-2 font-medium text-gray-800 truncate max-w-[100px] sm:max-w-[120px]">
           {user.name}
         </span>
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          className={`h-5 w-5 ml-1 text-gray-500 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          viewBox="0 0 20 20" 
+          fill="currentColor"
+        >
+          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+        </svg>
       </button>
 
       <AnimatePresence>
@@ -129,9 +140,34 @@ const UserMenu = ({ user, onSignOut }) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 divide-y divide-gray-100"
+            className="fixed sm:absolute bottom-0 left-0 right-0 sm:right-auto sm:left-auto sm:top-full sm:mt-2 w-full sm:w-56 bg-white border-t border-gray-200 sm:border sm:rounded-lg shadow-lg z-50 divide-y divide-gray-100 flex flex-col max-h-[80vh] sm:max-h-none"
           >
-            <div className="px-4 py-3">
+            {/* Mobile header (only shows on mobile) */}
+            <div className="sm:hidden flex items-center justify-between px-4 py-3 border-b border-gray-200 sticky top-0 bg-white z-10">
+              <div className="flex items-center">
+                <img 
+                  src={user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`} 
+                  alt={user.name}
+                  className="w-10 h-10 rounded-full border-2 border-white mr-3"
+                />
+                <div>
+                  <p className="font-medium text-gray-900">{user.name}</p>
+                  <p className="text-xs text-gray-600">{user.email}</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setIsOpen(false)}
+                className="p-2 rounded-full hover:bg-gray-100"
+                aria-label="Close menu"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* User info (desktop only) */}
+            <div className="hidden sm:block px-4 py-3">
               <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
               <p className="text-xs text-gray-700 truncate mt-0.5">{user.email}</p>
             </div>
@@ -142,11 +178,11 @@ const UserMenu = ({ user, onSignOut }) => {
                   setIsOpen(false);
                   onSignOut();
                 }}
-                className="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 focus:outline-none focus:bg-gray-50"
+                className="block w-full text-left px-4 py-3 sm:py-2.5 text-base sm:text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 focus:outline-none focus:bg-gray-50"
                 aria-label="Sign out"
               >
                 <div className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                   </svg>
                   Sign Out
@@ -428,15 +464,26 @@ const DisasterReliefCrowdfunding = () => {
              {/* Mobile Menu Items */}
     {isMobileMenuOpen && (
       <div className="flex flex-col space-y-4 mt-4 md:hidden">
-        <button onClick={() => { handleTabChange('browse'); setIsMobileMenuOpen(false); }} className="text-gray-900 bg-gray-100 py-2 rounded-lg">Browse</button>
-        <button onClick={() => { handleTabChange('emergency'); setIsMobileMenuOpen(false); }} className="text-gray-900 bg-gray-100 py-2 rounded-lg">Emergency</button>
-        <button onClick={() => { setShowAboutModal(true); setIsMobileMenuOpen(false); }} className="text-gray-900 bg-gray-100 py-2 rounded-lg">About Us</button>
-        <button onClick={() => { setShowCreateModal(true); setIsMobileMenuOpen(false); }} className="text-gray-900 bg-gray-100 py-2 rounded-lg">Create Campaign</button>
+        <button onClick={() => { handleTabChange('browse'); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">Browse</button>
+        <button onClick={() => { handleTabChange('emergency'); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">Emergency</button>
+        <button onClick={() => { setShowAboutModal(true); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">About Us</button>
+        <button onClick={() => { setShowCreateModal(true); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">Create Campaign</button>
         {status === 'authenticated' && (
-          <button onClick={() => { handleTabChange('dashboard'); setIsMobileMenuOpen(false); }} className="text-gray-900 bg-gray-100 py-2 rounded-lg">Dashboard</button>
+          <button onClick={() => { handleTabChange('dashboard'); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">Dashboard</button>
         )}
 
         {/* Mobile User Buttons */}
+        {status === 'authenticated' && (
+          <div className="flex flex-col space-y-2 mt-2">
+           <button 
+             onClick={() => { signOut({ callbackUrl: window.location.origin });
+               setIsMobileMenuOpen(false); }} 
+             className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg"
+            >
+             Sign Out
+            </button>
+         </div>
+        )}
         {status !== 'authenticated' && status !== 'loading' && (
           <div className="flex flex-col space-y-2 mt-2">
             <button onClick={() => { setShowSignInModal(true); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">Sign In</button>

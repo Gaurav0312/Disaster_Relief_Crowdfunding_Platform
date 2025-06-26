@@ -430,7 +430,7 @@ const DisasterReliefCrowdfunding = () => {
              <nav className="hidden md:flex space-x-8">
               <button onClick={() => handleTabChange('browse')} className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white">Browse</button>
               <button onClick={() => handleTabChange('emergency')} className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white">Emergency</button>
-              <button onClick={() => setShowAboutModal(true)} className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white">About Us</button>
+              <button onClick={() => handleTabChange('about')} className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white">About Us</button>
               <button onClick={() => setShowCreateModal(true)} className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white">Create Campaign</button>
               {status === 'authenticated' && (
               <button onClick={() => handleTabChange('dashboard')} className="px-3 py-3 rounded-md text-sm font-medium capitalize bg-gradient-to-br from-blue-600 to-purple-600 text-white">Dashboard</button>
@@ -461,48 +461,103 @@ const DisasterReliefCrowdfunding = () => {
                </div>
              </div>
 
-             {/* Mobile Menu Items */}
-    {isMobileMenuOpen && (
-      <div className="flex flex-col space-y-4 mt-4 md:hidden">
-        <button onClick={() => { handleTabChange('browse'); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">Browse</button>
-        <button onClick={() => { handleTabChange('emergency'); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">Emergency</button>
-        <button onClick={() => { setShowAboutModal(true); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">About Us</button>
-        <button onClick={() => { setShowCreateModal(true); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">Create Campaign</button>
-        {status === 'authenticated' && (
-          <button onClick={() => { handleTabChange('dashboard'); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">Dashboard</button>
-        )}
+         {/* Mobile Menu Items */}
+         {isMobileMenuOpen && (
+           <div className="flex flex-col space-y-4 mt-4 md:hidden">
+             <button
+               onClick={() => {
+                 handleTabChange('browse');
+                 setIsMobileMenuOpen(false);
+               }}
+               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg"
+             >
+               Browse
+             </button>
+             <button
+               onClick={() => {
+                 handleTabChange('emergency');
+                 setIsMobileMenuOpen(false);
+               }}
+               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg"
+             >
+               Emergency
+             </button>
+             <button
+               onClick={() => {
+                 setActiveTab('about'); setIsMobileMenuOpen(false);
+               }}
+               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg"
+             >
+               About Us
+             </button>
+             <button
+               onClick={() => {
+                 setShowCreateModal(true);
+                 setIsMobileMenuOpen(false);
+               }}
+               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg"
+             >
+               Create Campaign
+             </button>
+             {status === 'authenticated' && (
+               <button
+                 onClick={() => {
+                   handleTabChange('dashboard');
+                   setIsMobileMenuOpen(false);
+                 }}
+                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg"
+               >
+                 Dashboard
+               </button>
+             )}
 
-        {/* Mobile User Buttons */}
-        {status === 'authenticated' && (
-          <div className="flex flex-col space-y-2 mt-2">
-           <button 
-             onClick={() => { signOut({ callbackUrl: window.location.origin });
-               setIsMobileMenuOpen(false); }} 
-             className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg"
-            >
-             Sign Out
-            </button>
-         </div>
-        )}
-        {status !== 'authenticated' && status !== 'loading' && (
-          <div className="flex flex-col space-y-2 mt-2">
-            <button onClick={() => { setShowSignInModal(true); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">Sign In</button>
-            <button onClick={() => { setShowSignInModal(true); setIsMobileMenuOpen(false); }} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg">Register</button>
-          </div>
-        )}
-      </div>
-    )}
-          </div>
-        </motion.header>
+             {/* Mobile User Buttons */}
+             {status === 'authenticated' && (
+               <div className="flex flex-col space-y-2 mt-2">
+                 <button
+                   onClick={() => {
+                     signOut({ callbackUrl: window.location.origin });
+                     setIsMobileMenuOpen(false);
+                   }}
+                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg"
+                 >
+                   Sign Out
+                 </button>
+               </div>
+             )}
+             {status !== 'authenticated' && status !== 'loading' && (
+               <div className="flex flex-col space-y-2 mt-2">
+                 <button
+                   onClick={() => {
+                     setShowSignInModal(true);
+                     setIsMobileMenuOpen(false);
+                   }}
+                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg"
+                 >
+                   Sign In
+                 </button>
+                 <button
+                   onClick={() => {
+                     setShowSignInModal(true);
+                     setIsMobileMenuOpen(false);
+                   }}
+                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg"
+                 >
+                   Register
+                 </button>
+               </div>
+             )}
+           </div>
+         )}
+       </div>
+     </motion.header>
 
         <SignInModal 
           isOpen={showSignInModal} 
           onClose={() => setShowSignInModal(false)} 
         />
 
-        {showAboutModal && (
-         <AboutUs onClose={() => setShowAboutModal(false)} />
-        )}
+        
 
         <CreateCampaignModal
           isOpen={showCreateModal}
@@ -638,72 +693,76 @@ const DisasterReliefCrowdfunding = () => {
             )}
 
             {activeTab === 'emergency' && (
-              <motion.div
-                key="emergency"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-                className="text-center"
+  <motion.div
+    key="emergency"
+    initial={{ opacity: 0, scale: 0.95 }}
+    animate={{ opacity: 1, scale: 1 }}
+    exit={{ opacity: 0, scale: 0.95 }}
+    transition={{ duration: 0.3 }}
+    className="text-center px-4 py-6 sm:px-6"
+  >
+    <motion.div 
+      variants={scaleUp}
+      className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 sm:p-12 border border-white/20 max-w-3xl mx-auto"
+    >
+      <div className="flex justify-center mb-6">
+        <div className="bg-red-100 p-4 rounded-full">
+          <AlertCircle size={40} className="text-red-600" />
+        </div>
+      </div>
+      
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">Emergency Relief Needed</h2>
+      <p className="text-base sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+        Immediate support for communities facing active disasters. Your donation today provides life-saving aid.
+      </p>
+      
+      <div className="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-4 sm:p-8 mb-10 text-white text-left">
+        <h3 className="text-xl sm:text-2xl font-bold mb-4">Current Emergency Campaigns</h3>
+        
+        <div className="space-y-4">
+          {projects.filter(p => p.urgent).map(project => (
+            <div key={project.id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-white/20 p-4 rounded-xl space-y-4 sm:space-y-0">
+              <div>
+                <h4 className="font-bold text-base sm:text-lg">{project.title}</h4>
+                <p className="text-sm opacity-90">{project.location}</p>
+              </div>
+              <button 
+                onClick={() => handleDonateClick(project)}
+                className="bg-white text-red-600 hover:bg-red-50 font-medium py-2 px-4 sm:px-6 rounded-lg"
               >
-                <motion.div 
-                  variants={scaleUp}
-                  className="bg-white/80 backdrop-blur-lg rounded-2xl p-12 border border-white/20 max-w-3xl mx-auto"
-                >
-                  <div className="flex justify-center mb-6">
-                    <div className="bg-red-100 p-4 rounded-full">
-                      <AlertCircle size={48} className="text-red-600" />
-                    </div>
-                  </div>
-                  
-                  <h2 className="text-3xl font-bold text-gray-800 mb-4">Emergency Relief Needed</h2>
-                  <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-                    Immediate support for communities facing active disasters. Your donation today provides life-saving aid.
-                  </p>
-                  
-                  <div className="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-8 mb-10 text-white text-left">
-                    <h3 className="text-2xl font-bold mb-4">Current Emergency Campaigns</h3>
-                    
-                    <div className="space-y-4">
-                      {projects.filter(p => p.urgent).map(project => (
-                        <div key={project.id} className="flex items-center justify-between bg-white/20 p-4 rounded-xl">
-                          <div>
-                            <h4 className="font-bold">{project.title}</h4>
-                            <p className="text-sm opacity-90">{project.location}</p>
-                          </div>
-                          <button 
-                           onClick={() => handleDonateClick(project)}
-                           className="bg-white text-red-600 hover:bg-red-50 font-medium py-2 px-6 rounded-lg"
-                           >
-                            Donate
-                         </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="max-w-2xl mx-auto">
-                    <h3 className="text-2xl font-bold text-gray-800 mb-4">How Emergency Funding Helps</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-                      {[
-                        { title: "Medical Supplies", desc: "First aid kits, medicines and emergency care" },
-                        { title: "Shelter", desc: "Tents, blankets and temporary housing" },
-                        { title: "Clean Water & Food", desc: "Essential supplies for survival" }
-                      ].map((item, index) => (
-                        <motion.div 
-                          key={index}
-                          variants={itemVariants}
-                          className="bg-blue-50 p-6 rounded-2xl"
-                        >
-                          <div className="text-blue-600 font-bold mb-2">{item.title}</div>
-                          <p className="text-gray-600">{item.desc}</p>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
+                Donate
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <div className="max-w-2xl mx-auto">
+        <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">How Emergency Funding Helps</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 text-left">
+          {[
+            { title: "Medical Supplies", desc: "First aid kits, medicines and emergency care" },
+            { title: "Shelter", desc: "Tents, blankets and temporary housing" },
+            { title: "Clean Water & Food", desc: "Essential supplies for survival" }
+          ].map((item, index) => (
+            <motion.div 
+              key={index}
+              variants={itemVariants}
+              className="bg-blue-50 p-4 sm:p-6 rounded-2xl"
+            >
+              <div className="text-blue-600 font-bold mb-2">{item.title}</div>
+              <p className="text-gray-600 text-sm sm:text-base">{item.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  </motion.div>
+)}
+{activeTab === 'about' && (
+  <AboutUs />
+)}
+
 
           {/* Add Dashboard tab */}
           {activeTab === 'dashboard' && (

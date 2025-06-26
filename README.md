@@ -67,9 +67,40 @@ Environment variables handled via .env files
 
 Session management using NextAuth
 
+🔐 Environment Variables Setup
+Make sure to configure:
+
+MongoDB connection URI from MongoDB Atlas
+
+Razorpay API keys from your Razorpay Dashboard
+
+NextAuth secret key (you can generate one using: openssl rand -base64 32)
 
 
 🌐 Deployment
 Hosted on Vercel
 
 Database hosted on MongoDB Atlas
+
+🚀 Steps to Run the Project Locally
+
+# 1. Clone the repository
+git clone <your-repo-link>
+
+# 2. Navigate to the project directory
+cd disaster-relief-crowdfunding-platform
+
+# 3. Install dependencies
+npm install
+
+# 4. Create a .env.local file in the root directory and add the following:
+# Example .env.local
+MONGODB_URI=your-mongodb-connection-string
+NEXTAUTH_SECRET=your-random-secret-key
+NEXTAUTH_URL=http://localhost:3000
+RAZORPAY_KEY_ID=your-razorpay-key-id
+RAZORPAY_KEY_SECRET=your-razorpay-secret
+
+# 5. Run the development server
+npm run dev
+

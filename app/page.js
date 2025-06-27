@@ -205,6 +205,7 @@ const DisasterReliefCrowdfunding = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [modalTab, setModalTab] = useState('login');
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -355,7 +356,7 @@ const DisasterReliefCrowdfunding = () => {
 };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 relative overflow-hidden">
+    <div className="min-h-screen bg-purple-100/30 relative overflow-hidden">
       {/* Background Pattern with animation */}
       <motion.div 
         initial={{ opacity: 0 }}
@@ -415,15 +416,28 @@ const DisasterReliefCrowdfunding = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-20 items-center">
               <div className="flex items-center">
-                <Link href="/" className="flex items-center">
+                <a href="/" className="flex items-center">
                 <motion.div 
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-2"
-                >
-                  <Heart className="h-7 w-7" fill="currentColor" />
-                </motion.div>
-                <h1 className="ml-3 text-2xl font-bold text-gray-900">Relief Fund</h1></Link>
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 260, 
+                  damping: 20 
+                }}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-2"
+              >
+                <Heart className="h-7 w-7" fill="currentColor" />
+              </motion.div>
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="ml-3 text-2xl font-bold text-gray-900"
+                onClick={() => window.location.href = "/"}
+              >
+                Relief Fund
+              </motion.button>
+                </a>
               </div>
 
               {/* Desktop Menu */}
@@ -454,8 +468,8 @@ const DisasterReliefCrowdfunding = () => {
                <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
                 ) : (
                 <>
-               <button onClick={() => setShowSignInModal(true)} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium">Sign In</button>
-               <button onClick={() => setShowSignInModal(true)} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium">Register</button>
+                              <button onClick={() => { setModalTab('login'); setShowSignInModal(true); }} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium">Sign In</button>
+               <button onClick={() => { setModalTab('register'); setShowSignInModal(true); }} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium">Register</button>
                 </>
                 )}
                </div>
@@ -529,7 +543,7 @@ const DisasterReliefCrowdfunding = () => {
                <div className="flex flex-col space-y-2 mt-2">
                  <button
                    onClick={() => {
-                     setShowSignInModal(true);
+                     setModalTab('login'); setShowSignInModal(true);
                      setIsMobileMenuOpen(false);
                    }}
                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg"
@@ -538,7 +552,7 @@ const DisasterReliefCrowdfunding = () => {
                  </button>
                  <button
                    onClick={() => {
-                     setShowSignInModal(true);
+                     setModalTab('register'); setShowSignInModal(true);
                      setIsMobileMenuOpen(false);
                    }}
                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg"
@@ -554,7 +568,8 @@ const DisasterReliefCrowdfunding = () => {
 
         <SignInModal 
           isOpen={showSignInModal} 
-          onClose={() => setShowSignInModal(false)} 
+          onClose={() => setShowSignInModal(false)}
+          initialTab={modalTab}
         />
 
         

@@ -6,7 +6,7 @@ import { signIn } from 'next-auth/react';
 
 const GitHubIcon = () => <FaGithub size={20} className="mr-2" />;
 
-const SignInModal = ({ isOpen, onClose }) => {
+const SignInModal = ({ isOpen, onClose, initialTab = 'login' }) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,8 +24,12 @@ const SignInModal = ({ isOpen, onClose }) => {
       setPassword('');
       setConfirmPassword('');
       setError('');
+    } else {
+      // Set the tab when modal opens
+      setActiveTab(initialTab);
     }
-  }, [isOpen]);
+
+  }, [isOpen, initialTab]);
 
   const handleTabChange = (tab) => {
     // Clear form data when switching tabs

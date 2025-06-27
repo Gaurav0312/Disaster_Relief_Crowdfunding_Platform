@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+🌍 Disaster Relief Crowdfunding Platform
+Live Demo: https://disaster-relief-crowdfunding-platfo.vercel.app/
 
-## Getting Started
 
-First, run the development server:
+📚 Project Overview
+The Disaster Relief Crowdfunding Platform is a fully responsive, real-time donation website built to support communities affected by natural disasters. It allows users to browse active campaigns, donate securely via Razorpay, and access personalized dashboards.
 
-```bash
+
+🚀 Key Features
+🔹 Next.js 15 (App Router) with tab-based navigation (Browse, Emergency, About Us, Dashboard)
+
+🔹 Secure authentication using NextAuth
+
+🔹 Razorpay payment integration with confirmation modals
+
+🔹 MongoDB Atlas database for storing users, campaigns, and donations
+
+🔹 Real-time search and category filtering
+
+🔹 Emergency campaign prioritization
+
+🔹 Mobile-friendly design with framer-motion animations
+
+🔹 Safe back navigation to prevent accidental app closure
+
+
+
+🛠 Tech Stack
+Frontend: Next.js 15, Tailwind CSS, Framer Motion
+
+Backend: Next.js API routes, MongoDB Atlas
+
+Authentication: NextAuth
+
+Payments: Razorpay
+
+Deployment: Vercel
+
+
+
+📱 Mobile Responsiveness
+The platform is fully optimized for mobile with:
+
+Tab-based navigation
+
+Mobile-friendly modals and menus
+
+Safe mobile back button behavior
+
+
+
+💳 Payment Workflow
+Donors select a campaign and click Donate
+
+Razorpay checkout is triggered securely
+
+Post-payment confirmation modal is displayed
+
+Donation records are stored in MongoDB
+
+
+
+🔐 Security
+CORS protection
+
+Environment variables handled via .env files
+
+Session management using NextAuth
+
+🔐 Environment Variables Setup
+Make sure to configure:
+
+MongoDB connection URI from MongoDB Atlas
+
+Razorpay API keys from your Razorpay Dashboard
+
+NextAuth secret key (you can generate one using: openssl rand -base64 32)
+
+
+🌐 Deployment
+Hosted on Vercel
+
+Database hosted on MongoDB Atlas
+
+🚀 Steps to Run the Project Locally
+
+# 1. Clone the repository
+git clone <your-repo-link>
+
+# 2. Navigate to the project directory
+cd disaster-relief-crowdfunding-platform
+
+# 3. Install dependencies
+npm install
+
+# 4. Create a .env.local file in the root directory and add the following:
+# Example .env.local
+MONGODB_URI=your-mongodb-connection-string
+NEXTAUTH_SECRET=your-random-secret-key
+NEXTAUTH_URL=http://localhost:3000
+RAZORPAY_KEY_ID=your-razorpay-key-id
+RAZORPAY_KEY_SECRET=your-razorpay-secret
+
+# 5. Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

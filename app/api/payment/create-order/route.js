@@ -1,4 +1,3 @@
-// For Pages Router: pages/api/create-order.js
 import Razorpay from 'razorpay';
 
 const razorpay = new Razorpay({
@@ -12,7 +11,7 @@ export default async function handler(req, res) {
       const { amount, currency = 'INR' } = req.body;
       
       const options = {
-        amount: amount * 100, // Razorpay expects amount in paise
+        amount: amount * 100,
         currency,
         receipt: `receipt_${Date.now()}`,
       };

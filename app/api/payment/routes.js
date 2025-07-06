@@ -1,22 +1,21 @@
-// app/api/donate/route.js
-import { NextResponse } from 'next/server';
-import { DatabaseHelper } from '@/lib/mongodb';
+import { NextResponse } from "next/server";
+import { DatabaseHelper } from "@/lib/mongodb";
 
 export async function POST(req) {
   try {
-    const { 
-      amount, 
-      email, 
-      projectId, 
-      paymentMethod, 
+    const {
+      amount,
+      email,
+      projectId,
+      paymentMethod,
       transactionId,
-      donorName 
+      donorName,
     } = await req.json();
 
     // Validation
     if (!amount || !email || !projectId) {
       return NextResponse.json(
-        { message: 'Amount, email, and project ID are required' },
+        { message: "Amount, email, and project ID are required" },
         { status: 400 }
       );
     }
@@ -26,10 +25,10 @@ export async function POST(req) {
       amount: parseFloat(amount),
       email,
       projectId,
-      paymentMethod: paymentMethod || 'card',
+      paymentMethod: paymentMethod || "card",
       transactionId: transactionId || `txn_${Date.now()}`,
-      donorName: donorName || 'Anonymous',
-      status: 'success',
+      donorName: donorName || "Anonymous",
+      status: "success",
     };
 
     // Save donation
@@ -41,17 +40,16 @@ export async function POST(req) {
     }
 
     return NextResponse.json(
-      { 
-        message: 'Payment processed successfully',
-        donationId: result.id 
+      {
+        message: "Payment processed successfully",
+        donationId: result.id,
       },
       { status: 201 }
     );
-
   } catch (error) {
-    console.error('Payment error:', error);
+    console.error("Payment error:", error);
     return NextResponse.json(
-      { message: 'Payment processing failed' },
+      { message: "Payment processing failed" },
       { status: 500 }
     );
   }

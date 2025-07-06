@@ -1,5 +1,4 @@
-// app/api/save-payment/route.js
-import { DatabaseHelper } from '@/lib/mongodb'; // Adjust the import path as necessary
+import { DatabaseHelper } from '@/lib/mongodb';
 import { NextResponse } from 'next/server';
 
 export async function POST(request) {
@@ -9,9 +8,9 @@ export async function POST(request) {
     // Validate required fields
     if (!paymentData.projectId || !paymentData.email || !paymentData.amount) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Missing required fields' 
+        {
+          success: false,
+          error: "Missing required fields"
         },
         { status: 400 }
       );

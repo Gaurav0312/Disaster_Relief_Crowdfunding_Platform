@@ -15,7 +15,9 @@ export default function DonorDashboard() {
 
   const fetchUserDonations = async (email) => {
     try {
-      const response = await fetch(`/api/donations?email=${encodeURIComponent(email)}`);
+      const response = await fetch(
+        `/api/donations?email=${encodeURIComponent(email)}`
+      );
       const data = await response.json();
       if (response.ok) {
         setDonations(data);
@@ -41,7 +43,9 @@ export default function DonorDashboard() {
 
       <div className="mb-4">
         <h2 className="font-semibold text-lg mb-2">Total Donated</h2>
-        <p className="text-blue-600 text-xl font-bold">₹{totalDonated.toLocaleString()}</p>
+        <p className="text-blue-600 text-xl font-bold">
+          ₹{totalDonated.toLocaleString()}
+        </p>
       </div>
 
       <div>

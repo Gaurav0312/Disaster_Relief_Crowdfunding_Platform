@@ -1,6 +1,6 @@
-import bcrypt from 'bcryptjs';
-import { DatabaseHelper } from '../../../lib/mongodb';
-import { NextResponse } from 'next/server';
+import bcrypt from "bcryptjs";
+import { DatabaseHelper } from "../../../lib/mongodb";
+import { NextResponse } from "next/server";
 
 export async function POST(request) {
   try {
@@ -9,14 +9,14 @@ export async function POST(request) {
     // Validation
     if (!fullName || !email || !password) {
       return NextResponse.json(
-        { message: 'Full name, email, and password are required' },
+        { message: "Full name, email, and password are required" },
         { status: 400 }
       );
     }
 
     if (password.length < 6) {
       return NextResponse.json(
-        { message: 'Password must be at least 6 characters' },
+        { message: "Password must be at least 6 characters" },
         { status: 400 }
       );
     }
@@ -25,7 +25,7 @@ export async function POST(request) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { message: 'Please enter a valid email address' },
+        { message: "Please enter a valid email address" },
         { status: 400 }
       );
     }
@@ -40,30 +40,30 @@ export async function POST(request) {
       password: hashedPassword,
     });
 
-    console.log('User registered successfully:', result);
+    console.log("User registered successfully:", result);
 
     return NextResponse.json(
-      { 
-        message: 'User created successfully',
-        userId: result.id 
+      {
+        message: "User created successfully",
+        userId: result.id,
       },
       { status: 201 }
     );
-
   } catch (error) {
-    console.error('Registration error:', error);
-    
-    if (error.message === 'User already exists') {
+    console.error("Registration error:", error);
+
+    if (error.message === "User already exists") {
       return NextResponse.json(
-        { message: 'User with this email already exists' },
+        { message: "User with this email already exists" },
         { status: 409 }
       );
     }
 
     return NextResponse.json(
-      { 
-        message: 'Registration failed. Please try again.',
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      {
+        message: "Registration failed. Please try again.",
+        error:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
       },
       { status: 500 }
     );

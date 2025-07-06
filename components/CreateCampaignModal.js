@@ -1,10 +1,10 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, IndianRupee } from 'lucide-react';
+import { motion, AnimatePresence } from "framer-motion";
+import { X, IndianRupee } from "lucide-react";
 
 const CreateCampaignModal = ({ isOpen, onClose, onLaunch }) => {
   const scaleUp = {
     hidden: { scale: 0.9, opacity: 0 },
-    visible: { scale: 1, opacity: 1, transition: { duration: 0.5 } }
+    visible: { scale: 1, opacity: 1, transition: { duration: 0.5 } },
   };
 
   return (
@@ -26,28 +26,34 @@ const CreateCampaignModal = ({ isOpen, onClose, onLaunch }) => {
           >
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-gray-800">Create a Relief Campaign</h2>
-                <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Create a Relief Campaign
+                </h2>
+                <button
+                  onClick={onClose}
+                  className="text-gray-500 hover:text-gray-700"
+                >
                   <X size={24} />
                 </button>
               </div>
-              
-              <motion.div 
-                variants={scaleUp}
-                className="bg-white rounded-2xl"
-              >
+
+              <motion.div variants={scaleUp} className="bg-white rounded-2xl">
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">Campaign Title</label>
-                    <input 
-                      type="text" 
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Campaign Title
+                    </label>
+                    <input
+                      type="text"
                       placeholder="e.g. Flood Relief for Assam"
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">Disaster Category</label>
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Disaster Category
+                    </label>
                     <select className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                       <option>Select disaster type</option>
                       <option>Earthquake</option>
@@ -58,41 +64,49 @@ const CreateCampaignModal = ({ isOpen, onClose, onLaunch }) => {
                       <option>Other</option>
                     </select>
                   </div>
-                  
+
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">Location</label>
-                    <input 
-                      type="text" 
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Location
+                    </label>
+                    <input
+                      type="text"
                       placeholder="City, Country"
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">Funding Goal (INR)</label>
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Funding Goal (INR)
+                    </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <IndianRupee size={18} className="text-gray-500" />
                       </div>
-                      <input 
-                        type="number" 
+                      <input
+                        type="number"
                         placeholder="Enter amount"
                         className="w-full pl-10 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                   </div>
-                  
+
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">Campaign Description</label>
-                    <textarea 
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Campaign Description
+                    </label>
+                    <textarea
                       rows={5}
                       placeholder="Tell the story of who you're helping and how the funds will be used..."
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">Cover Image</label>
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Cover Image
+                    </label>
                     <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center">
                       <div className="text-gray-500">
                         <div className="flex justify-center mb-2">
@@ -103,7 +117,7 @@ const CreateCampaignModal = ({ isOpen, onClose, onLaunch }) => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="pt-4">
                     <button
                       type="button"

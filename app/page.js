@@ -407,7 +407,7 @@ const DisasterReliefCrowdfunding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-purple-100/30 relative overflow-hidden">
+    <div className="min-h-screen bg-purple-200/30 relative overflow-hidden">
       {/* Background Pattern with animation */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -682,7 +682,7 @@ const DisasterReliefCrowdfunding = () => {
         <CreateCampaignModal
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
-          onLaunch={() => {
+          onCampaignCreated={() => {
             setShowCreateModal(false);
             setShowLaunchModal(true);
           }}

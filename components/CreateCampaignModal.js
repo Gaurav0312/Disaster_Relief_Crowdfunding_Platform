@@ -1,10 +1,148 @@
+import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, IndianRupee } from "lucide-react";
+import { X, IndianRupee, Image as ImageIcon, Loader2 } from "lucide-react";
 
-const CreateCampaignModal = ({ isOpen, onClose, onLaunch }) => {
+const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }) => {
+  const [formData, setFormData] = useState({
+    title: "",
+    category: "",
+    location: "",
+    goal: "",
+    description: "",
+  });
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
+  const fileInputRef = useRef(null);
+
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setUploadError("File size must be less than 5MB");
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setUploadError("Only image files are allowed");
+        return;
+      }
+
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+      setUploadError("");
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const scaleUp = {
     hidden: { scale: 0.9, opacity: 0 },
     visible: { scale: 1, opacity: 1, transition: { duration: 0.5 } },
+  };
+
+  const handleLaunchCampaign = async () => {
+    try {
+      setIsUploading(true);
+      setUploadError("");
+
+      // Validate form data
+      if (!formData.title || !formData.category || !formData.location || !formData.goal || !formData.description) {
+        setUploadError("Please fill in all required fields");
+        setIsUploading(false);
+        return;
+      }
+
+      let imageUrl = "";
+      if (selectedFile) {
+        console.log("Starting image upload...");
+        
+        const imageFormData = new FormData();
+        imageFormData.append("file", selectedFile);
+
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: imageFormData,
+        });
+
+        console.log("Upload response status:", response.status);
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Upload error response:", errorData);
+          throw new Error(errorData.message || "Image upload failed");
+        }
+
+        const data = await response.json();
+        imageUrl = data.url;
+        console.log("Image uploaded successfully:", imageUrl);
+      }
+
+      const campaignData = {
+        ...formData,
+        goal: Number(formData.goal),
+        coverImage: imageUrl,
+      };
+
+      console.log("Saving campaign data:", campaignData);
+
+      console.log("Making request to /api/campaigns");
+      const saveResponse = await fetch("/api/campaigns", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(campaignData),
+      });
+
+      console.log("Save response status:", saveResponse.status);
+      console.log("Save response headers:", saveResponse.headers);
+
+      if (saveResponse.ok) {
+        console.log("Campaign saved successfully");
+        onCampaignCreated();
+        onClose();
+        
+        // Reset form
+        setFormData({
+          title: "",
+          category: "",
+          location: "",
+          goal: "",
+          description: "",
+        });
+        setSelectedFile(null);
+        setPreviewUrl(null);
+      } else {
+        // Check if response is actually JSON
+        const contentType = saveResponse.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const errorData = await saveResponse.json();
+          console.error("Failed to save campaign", errorData);
+          throw new Error(errorData.message || "Failed to save campaign");
+        } else {
+          // If not JSON, log the HTML response
+          const htmlResponse = await saveResponse.text();
+          console.error("Received HTML response instead of JSON:", htmlResponse);
+          throw new Error("Server returned an error page instead of JSON response");
+        }
+      }
+    } catch (error) {
+      console.error("Error launching campaign:", error);
+      setUploadError(error.message || "Failed to launch campaign");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -32,101 +170,166 @@ const CreateCampaignModal = ({ isOpen, onClose, onLaunch }) => {
                 <button
                   onClick={onClose}
                   className="text-gray-500 hover:text-gray-700"
+                  disabled={isUploading}
                 >
                   <X size={24} />
                 </button>
               </div>
 
+              {uploadError && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                  {uploadError}
+                </div>
+              )}
+
               <motion.div variants={scaleUp} className="bg-white rounded-2xl">
                 <div className="space-y-6">
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">
-                      Campaign Title
+                      Campaign Title *
                     </label>
                     <input
+                      name="title"
+                      value={formData.title}
+                      onChange={handleInputChange}
                       type="text"
                       placeholder="e.g. Flood Relief for Assam"
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      disabled={isUploading}
                     />
                   </div>
 
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">
-                      Disaster Category
+                      Disaster Category *
                     </label>
-                    <select className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                      <option>Select disaster type</option>
-                      <option>Earthquake</option>
-                      <option>Flood</option>
-                      <option>Wildfire</option>
-                      <option>Hurricane/Typhoon</option>
-                      <option>Tsunami</option>
-                      <option>Other</option>
+                    <select
+                      name="category"
+                      value={formData.category}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      disabled={isUploading}
+                    >
+                      <option value="">Select disaster type</option>
+                      <option value="Earthquake">Earthquake</option>
+                      <option value="Flood">Flood</option>
+                      <option value="Wildfire">Wildfire</option>
+                      <option value="Hurricane/Typhoon">Hurricane/Typhoon</option>
+                      <option value="Tsunami">Tsunami</option>
+                      <option value="Other">Other</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">
-                      Location
+                      Location *
                     </label>
                     <input
+                      name="location"
+                      value={formData.location}
+                      onChange={handleInputChange}
                       type="text"
                       placeholder="City, Country"
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      disabled={isUploading}
                     />
                   </div>
 
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">
-                      Funding Goal (INR)
+                      Funding Goal (INR) *
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <IndianRupee size={18} className="text-gray-500" />
                       </div>
                       <input
+                        name="goal"
+                        value={formData.goal}
+                        onChange={handleInputChange}
                         type="number"
                         placeholder="Enter amount"
                         className="w-full pl-10 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        disabled={isUploading}
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">
-                      Campaign Description
+                      Campaign Description *
                     </label>
                     <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
                       rows={5}
                       placeholder="Tell the story of who you're helping and how the funds will be used..."
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      disabled={isUploading}
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                      Cover Image
-                    </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center">
-                      <div className="text-gray-500">
-                        <div className="flex justify-center mb-2">
-                          <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
+                  <motion.div variants={scaleUp} className="bg-white rounded-2xl">
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Cover Image
+                        </label>
+                        <div
+                          className={`border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-blue-400 transition-colors ${
+                            isUploading ? 'pointer-events-none opacity-50' : ''
+                          }`}
+                          onClick={handleImageClick}
+                        >
+                          {previewUrl ? (
+                            <img
+                              src={previewUrl}
+                              alt="Selected"
+                              className="w-full h-48 object-cover rounded-xl"
+                            />
+                          ) : (
+                            <div className="text-gray-500">
+                              <div className="flex justify-center mb-2">
+                                <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16 flex items-center justify-center">
+                                  <ImageIcon className="text-gray-500" size={32} />
+                                </div>
+                              </div>
+                              <p>Drag & drop your image here</p>
+                              <p className="text-sm mt-1">or click to browse</p>
+                              <p className="text-xs mt-1 text-gray-400">Max size: 5MB</p>
+                            </div>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            ref={fileInputRef}
+                            onChange={handleImageChange}
+                            className="hidden"
+                            disabled={isUploading}
+                          />
                         </div>
-                        <p>Drag & drop your image here</p>
-                        <p className="text-sm mt-1">or click to browse</p>
+                      </div>
+
+                      <div className="pt-4">
+                        <button
+                          type="button"
+                          onClick={handleLaunchCampaign}
+                          disabled={isUploading}
+                          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-4 px-6 rounded-xl text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                          {isUploading ? (
+                            <>
+                              <Loader2 className="animate-spin mr-2" size={20} />
+                              Launching Campaign...
+                            </>
+                          ) : (
+                            'Launch Campaign'
+                          )}
+                        </button>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="pt-4">
-                    <button
-                      type="button"
-                      onClick={onLaunch}
-                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-4 px-6 rounded-xl text-lg"
-                    >
-                      Launch Campaign
-                    </button>
-                  </div>
+                  </motion.div>
                 </div>
               </motion.div>
             </div>

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
@@ -31,9 +31,19 @@ import {
   Truck,
   ExternalLink,
 } from "lucide-react";
+import {
+  FacebookShareButton,
+  FacebookIcon,
+  TwitterShareButton,
+  TwitterIcon,
+  WhatsappShareButton,
+  WhatsappIcon,
+} from "react-share";
 import DonationModal from "@/components/DonationModal";
 
 const CampaignDetailPage = ({ campaignId, onBack }) => {
+  const [showShareDropdown, setShowShareDropdown] = useState(false);
+  const shareContainerRef = useRef(null);
   const [campaign, setCampaign] = useState(null);
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
@@ -171,7 +181,7 @@ const CampaignDetailPage = ({ campaignId, onBack }) => {
 
     2: {
       id: 2,
-      title: "Ahmedabad Air India Crash Relief",
+      title: "Ahmedabad Air India Plane Crash Relief",
       category: "aviation",
       location: "Ahmedabad, Gujarat",
       shortDescription:
@@ -929,6 +939,30 @@ const CampaignDetailPage = ({ campaignId, onBack }) => {
     },
   };
 
+  const campaignUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/campaigns/${campaignId}`
+      : "";
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        shareContainerRef.current &&
+        !shareContainerRef.current.contains(event.target)
+      ) {
+        setShowShareDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleShareClick = (e) => {
+    e.stopPropagation();
+    setShowShareDropdown(!showShareDropdown);
+  };
+
   useEffect(() => {
     const campaignInfo = campaignData[campaignId];
     if (campaignInfo) {
@@ -964,10 +998,10 @@ const CampaignDetailPage = ({ campaignId, onBack }) => {
         className="bg-white/80 backdrop-blur-lg border-b border-white/20 sticky top-0 z-50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-20">
+          <div className="flex items-center gap-4 h-20">
             <button
               onClick={onBack}
-              className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors"
+              className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors font-semibold"
             >
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Campaigns</span>
@@ -975,12 +1009,50 @@ const CampaignDetailPage = ({ campaignId, onBack }) => {
             </button>
 
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <button className="p-2 text-gray-600 hover:text-red-600 transition-colors">
-                <Heart className="h-5 w-5" />
-              </button>
-              <button className="p-2 text-gray-600 hover:text-blue-600 transition-colors">
-                <Share2 className="h-5 w-5" />
-              </button>
+              <div className="relative" ref={shareContainerRef}>
+                <button
+                  className="bg-white border border-gray-300 hover:bg-gray-50 rounded-xl p-3 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2"
+                  onClick={handleShareClick}
+                >
+                  <Share2 size={18} className="text-gray-600" />
+                </button>
+                {showShareDropdown && (
+                  <div
+                    className=" absolute left-1/2 -translate-x-1/2 top-full mt-2 sm:left-full sm:ml-6 sm:top-1/2 sm:-translate-y-1/2 sm:-translate-x-0  w-48 gap-2 bg-white rounded-xl shadow-lg border border-gray-200 p-2 z-10"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex justify-between p-2">
+                      <FacebookShareButton
+                        url={campaignUrl}
+                        quote={`Check out this campaign: ${campaign.title}`}
+                        hashtag="#DisasterRelief"
+                        className="transition-transform hover:scale-110"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <FacebookIcon size={32} round />
+                      </FacebookShareButton>
+                      <TwitterShareButton
+                        url={campaignUrl}
+                        title={`Support ${campaign.title}`}
+                        hashtags={["DisasterRelief", "Crowdfunding"]}
+                        className="transition-transform hover:scale-110"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <TwitterIcon size={32} round />
+                      </TwitterShareButton>
+                      <WhatsappShareButton
+                        url={campaignUrl}
+                        title={`Help support ${campaign.title}`}
+                        separator=" "
+                        className="transition-transform hover:scale-110"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <WhatsappIcon size={32} round />
+                      </WhatsappShareButton>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

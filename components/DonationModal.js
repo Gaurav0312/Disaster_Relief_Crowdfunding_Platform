@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowLeft, Info, CheckCircle } from "lucide-react";
 
 const DonationModal = ({ isOpen, onClose, project }) => {
-  const [selectedAmount, setSelectedAmount] = useState(500);
+  const [selectedAmount, setSelectedAmount] = useState(1000);
   const [customAmount, setCustomAmount] = useState("");
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState("idle"); // idle, processing, success, error
@@ -17,7 +17,9 @@ const DonationModal = ({ isOpen, onClose, project }) => {
     isAnonymous: false,
   });
 
-  const presetAmounts = [300, 500, 1000];
+  const modalRef = useRef(null);
+
+  const presetAmounts = [500, 1000, 1500];
 
   const calculateTip = () => {
     const amount = isCustomMode
@@ -259,7 +261,7 @@ const DonationModal = ({ isOpen, onClose, project }) => {
       phone: "",
       isAnonymous: false,
     });
-    setSelectedAmount(500);
+    setSelectedAmount(1000);
     setCustomAmount("");
     setIsCustomMode(false);
     setTipPercent(18);
@@ -267,6 +269,43 @@ const DonationModal = ({ isOpen, onClose, project }) => {
     setPaymentMessage("");
     setShowSuccessPopup(false);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleBack = () => {
+      if (isOpen) {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      // Only push state if not already modalOpen
+      if (!window.history.state || !window.history.state.modalOpen) {
+        window.history.pushState({ modalOpen: true }, "");
+      }
+      window.addEventListener("popstate", handleBack);
+    }
+
+    return () => {
+      window.removeEventListener("popstate", handleBack);
+      // Do NOT call window.history.back() here!
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -322,275 +361,280 @@ const DonationModal = ({ isOpen, onClose, project }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-50 flex items-start justify-center p-0 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-50 flex items-center justify-center p-0 sm:p-4 overflow-y-auto"
       onClick={handleClose}
     >
       <div
-        className="bg-white w-full min-h-screen sm:min-h-0 sm:rounded-2xl sm:shadow-2xl sm:max-w-md sm:mx-auto sm:my-10 sm:max-h-[90vh] overflow-y-auto transform transition-all duration-300"
+        ref={modalRef}
+        className="relative flex items-start justify-center min-h-screen p-0 sm:p-4 overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header - Sticky on mobile */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 sm:p-6 z-10 shadow-sm sm:shadow-none">
-          <button
-            onClick={handleClose}
-            className="absolute left-4 sm:left-6 top-1/2 transform -translate-y-1/2 text-cyan-500 hover:bg-gray-100 rounded-full p-2 transition-colors"
-            aria-label="Close"
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <h2 className="text-lg font-semibold text-gray-800 ml-10 truncate text-center sm:text-left">
-            Support: {project?.title}
-          </h2>
-        </div>
-
-        {/* Body */}
-        <div className="p-4 sm:p-6">
-          {/* Payment Status Messages */}
-          {paymentStatus !== "idle" && (
-            <div
-              className={`mb-4 p-3 rounded-lg text-sm ${
-                paymentStatus === "success"
-                  ? "bg-green-50 border border-green-200 text-green-800"
-                  : paymentStatus === "processing"
-                  ? "bg-blue-50 border border-blue-200 text-blue-800"
-                  : "bg-red-50 border border-red-200 text-red-800"
-              }`}
+        <div className="bg-white w-full max-h-[90vh] sm:rounded-2xl sm:shadow-2xl sm:max-w-md sm:mx-auto sm:my-10 overflow-y-auto transform transition-all duration-300">
+          {/* Header - Sticky on mobile */}
+          <div className="  bg-white border-b border-gray-200 p-6 sm:p-6 z-10 shadow-sm sm:shadow-none sticky top-6 sm:top-0">
+            <button
+              onClick={handleClose}
+              className="absolute left-4 sm:left-6 top-1/2 transform -translate-y-1/2 text-cyan-500 hover:bg-gray-100 rounded-full p-2 transition-colors"
+              aria-label="Close"
             >
-              <div className="flex items-center gap-2">
-                {paymentStatus === "processing" && (
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent"></div>
-                )}
-                <span className="font-medium">{paymentMessage}</span>
-              </div>
-            </div>
-          )}
+              <ArrowLeft size={20} />
+            </button>
+            <h2 className="text-lg font-semibold text-gray-800 pl-8 pr-2 truncate text-center sm:text-left">
+              Support: {project?.title}
+            </h2>
+          </div>
 
-          <div className="space-y-6">
-            {/* Project Info */}
-            {project && (
-              <div className="bg-blue-50 rounded-lg p-3 sm:p-4">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={project.imageUrl}
-                    alt={project.title}
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover"
-                  />
-                  <div className="overflow-hidden">
-                    <h3 className="font-semibold text-gray-800 truncate">
-                      {project.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-gray-600 truncate">
-                      {project.location}
-                    </p>
-                  </div>
+          {/* Body */}
+          <div className="p-10 sm:p-6">
+            {/* Payment Status Messages */}
+            {paymentStatus !== "idle" && (
+              <div
+                className={`mb-4 p-3 rounded-lg text-sm ${
+                  paymentStatus === "success"
+                    ? "bg-green-50 border border-green-200 text-green-800"
+                    : paymentStatus === "processing"
+                    ? "bg-blue-50 border border-blue-200 text-blue-800"
+                    : "bg-red-50 border border-red-200 text-red-800"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  {paymentStatus === "processing" && (
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent"></div>
+                  )}
+                  <span className="font-medium">{paymentMessage}</span>
                 </div>
               </div>
             )}
 
-            {/* Contribution Info */}
-            <div className="text-center text-gray-600 text-xs sm:text-sm">
-              Most contributors donate approx{" "}
-              <span className="text-cyan-500 font-semibold">₹1000</span>
-            </div>
+            <div className="space-y-6">
+              {/* Project Info */}
+              {project && (
+                <div className="bg-blue-50 rounded-lg p-3 sm:p-4">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={project.imageUrl}
+                      alt={project.title}
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover"
+                    />
+                    <div className="overflow-hidden">
+                      <h3 className="font-semibold text-gray-800 truncate">
+                        {project.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-gray-600 truncate">
+                        {project.location}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-            {/* Amount Options - Improved mobile layout */}
-            <div className="flex flex-wrap gap-2 justify-center mb-4">
-              {presetAmounts.map((amount) => (
+              {/* Contribution Info */}
+              <div className="text-center text-gray-600 text-xs sm:text-sm">
+                Most contributors donate approx{" "}
+                <span className="text-cyan-500 font-semibold">₹1000</span>
+              </div>
+
+              {/* Amount Options - Improved mobile layout */}
+              <div className="flex flex-wrap gap-2 justify-center mb-4">
+                {presetAmounts.map((amount) => (
+                  <button
+                    key={amount}
+                    onClick={() => handleAmountSelect(amount)}
+                    disabled={paymentStatus === "processing"}
+                    className={`min-w-[70px] sm:min-w-[80px] px-3 py-2 sm:px-4 sm:py-2 rounded-full font-medium text-sm sm:text-base transition-all duration-200 ${
+                      selectedAmount === amount && !isCustomMode
+                        ? "bg-cyan-500 text-white shadow-lg"
+                        : "bg-white border border-gray-300 text-gray-700 hover:border-cyan-500"
+                    } ${
+                      paymentStatus === "processing"
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
+                  >
+                    ₹{amount}
+                  </button>
+                ))}
+              </div>
+
+              {/* Other Amount - Mobile optimized */}
+              <div className="text-center mb-4">
                 <button
-                  key={amount}
-                  onClick={() => handleAmountSelect(amount)}
+                  onClick={handleCustomAmount}
                   disabled={paymentStatus === "processing"}
-                  className={`min-w-[70px] sm:min-w-[80px] px-3 py-2 sm:px-4 sm:py-2 rounded-full font-medium text-sm sm:text-base transition-all duration-200 ${
-                    selectedAmount === amount && !isCustomMode
-                      ? "bg-cyan-500 text-white shadow-lg"
-                      : "bg-white border border-gray-300 text-gray-700 hover:border-cyan-500"
-                  } ${
+                  className={`w-full max-w-xs mx-auto px-4 py-3 rounded-lg bg-white border border-gray-300 text-gray-600 hover:border-cyan-500 transition-colors text-sm sm:text-base ${
                     paymentStatus === "processing"
                       ? "opacity-50 cursor-not-allowed"
                       : ""
                   }`}
                 >
-                  ₹{amount}
+                  Other Amount
                 </button>
-              ))}
-            </div>
-
-            {/* Other Amount - Mobile optimized */}
-            <div className="text-center mb-4">
-              <button
-                onClick={handleCustomAmount}
-                disabled={paymentStatus === "processing"}
-                className={`w-full max-w-xs mx-auto px-4 py-3 rounded-lg bg-white border border-gray-300 text-gray-600 hover:border-cyan-500 transition-colors text-sm sm:text-base ${
-                  paymentStatus === "processing"
-                    ? "opacity-50 cursor-not-allowed"
-                    : ""
-                }`}
-              >
-                Other Amount
-              </button>
-              {isCustomMode && (
-                <div className="mt-3">
-                  <input
-                    type="number"
-                    value={customAmount}
-                    onChange={handleCustomAmountChange}
-                    placeholder="Enter amount"
-                    disabled={paymentStatus === "processing"}
-                    className="w-full text-base px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:opacity-50"
-                    inputMode="decimal"
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Platform Fee Info */}
-            <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-3 sm:p-4 mb-4">
-              <div className="flex items-start gap-2">
-                <Info
-                  size={18}
-                  className="text-cyan-600 mt-0.5 flex-shrink-0"
-                />
-                <div className="text-xs sm:text-sm">
-                  <div className="font-bold text-cyan-700">
-                    Platform is charging 0% platform fee* for this fundraiser,
-                    relying solely on the generosity of contributors like you.
+                {isCustomMode && (
+                  <div className="mt-3">
+                    <input
+                      type="number"
+                      value={customAmount}
+                      onChange={handleCustomAmountChange}
+                      placeholder="Enter amount"
+                      disabled={paymentStatus === "processing"}
+                      className="w-full text-base px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:opacity-50"
+                      inputMode="decimal"
+                    />
                   </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Tip Section - Stacked on mobile */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
-              <span className="text-gray-700 text-sm">
-                Support us with a tip:
-              </span>
-              <select
-                value={tipPercent}
-                onChange={(e) => setTipPercent(parseInt(e.target.value))}
-                disabled={paymentStatus === "processing"}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:opacity-50"
-              >
-                <option value={15}>
-                  15% (₹
-                  {Math.round(
-                    ((isCustomMode
-                      ? parseFloat(customAmount) || 0
-                      : selectedAmount) *
-                      15) /
-                      100
-                  )}
-                  )
-                </option>
-                <option value={10}>
-                  10% (₹
-                  {Math.round(
-                    ((isCustomMode
-                      ? parseFloat(customAmount) || 0
-                      : selectedAmount) *
-                      10) /
-                      100
-                  )}
-                  )
-                </option>
-                <option value={5}>
-                  5% (₹
-                  {Math.round(
-                    ((isCustomMode
-                      ? parseFloat(customAmount) || 0
-                      : selectedAmount) *
-                      5) /
-                      100
-                  )}
-                  )
-                </option>
-                <option value={0}>No tip</option>
-              </select>
-            </div>
-
-            {/* Total Amount - More prominent */}
-            <div className="text-center font-bold text-gray-800 mb-5 p-3 bg-gray-50 rounded-lg border border-gray-200">
-              <div className="text-sm text-gray-600">Total Amount</div>
-              <div className="text-xl text-cyan-600">₹ {calculateTotal()}</div>
-            </div>
-
-            {/* Form Fields */}
-            <div className="space-y-4">
-              <div>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  placeholder="Full Name *"
-                  disabled={paymentStatus === "processing"}
-                  className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:opacity-50"
-                />
-              </div>
-
-              <div className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  id="anonymous"
-                  name="isAnonymous"
-                  checked={formData.isAnonymous}
-                  onChange={handleInputChange}
-                  disabled={paymentStatus === "processing"}
-                  className="mt-1 w-4 h-4 text-cyan-500 border-gray-300 rounded focus:ring-cyan-500 disabled:opacity-50"
-                />
-                <label htmlFor="anonymous" className="text-sm text-gray-700">
-                  Make my contribution anonymous
-                </label>
-              </div>
-
-              <div>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Email Address *"
-                  disabled={paymentStatus === "processing"}
-                  className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:opacity-50"
-                  inputMode="email"
-                />
-              </div>
-
-              <div>
-                <div className="flex gap-2">
-                  <div className="flex items-center gap-1 px-3 py-3 border border-gray-300 rounded-lg bg-gray-50">
-                    <div className="w-4 h-3 bg-gradient-to-b from-orange-400 via-white to-green-500 rounded-sm"></div>
-                    <span className="text-sm font-medium">+91</span>
-                  </div>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    placeholder="Mobile Number *"
-                    disabled={paymentStatus === "processing"}
-                    className="flex-1 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:opacity-50"
-                    inputMode="tel"
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-2">
-                  Payment updates will be sent to this number
-                </p>
-              </div>
-
-              <button
-                onClick={handleSubmit}
-                disabled={paymentStatus === "processing"}
-                className="w-full bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-semibold py-4 rounded-lg transition-all duration-300 mt-4 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
-              >
-                {paymentStatus === "processing" ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                    Processing...
-                  </div>
-                ) : (
-                  "Proceed to Payment"
                 )}
-              </button>
+              </div>
+
+              {/* Platform Fee Info */}
+              <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-3 sm:p-4 mb-4">
+                <div className="flex items-start gap-2">
+                  <Info
+                    size={18}
+                    className="text-cyan-600 mt-0.5 flex-shrink-0"
+                  />
+                  <div className="text-xs sm:text-sm">
+                    <div className="font-bold text-cyan-700">
+                      Platform is charging 0% platform fee* for this fundraiser,
+                      relying solely on the generosity of contributors like you.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tip Section - Stacked on mobile */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                <span className="text-gray-700 text-sm">
+                  Support us with a tip:
+                </span>
+                <select
+                  value={tipPercent}
+                  onChange={(e) => setTipPercent(parseInt(e.target.value))}
+                  disabled={paymentStatus === "processing"}
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:opacity-50"
+                >
+                  <option value={15}>
+                    15% (₹
+                    {Math.round(
+                      ((isCustomMode
+                        ? parseFloat(customAmount) || 0
+                        : selectedAmount) *
+                        15) /
+                        100
+                    )}
+                    )
+                  </option>
+                  <option value={10}>
+                    10% (₹
+                    {Math.round(
+                      ((isCustomMode
+                        ? parseFloat(customAmount) || 0
+                        : selectedAmount) *
+                        10) /
+                        100
+                    )}
+                    )
+                  </option>
+                  <option value={5}>
+                    5% (₹
+                    {Math.round(
+                      ((isCustomMode
+                        ? parseFloat(customAmount) || 0
+                        : selectedAmount) *
+                        5) /
+                        100
+                    )}
+                    )
+                  </option>
+                  <option value={0}>No tip</option>
+                </select>
+              </div>
+
+              {/* Total Amount - More prominent */}
+              <div className="text-center font-bold text-gray-800 mb-5 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="text-sm text-gray-600">Total Amount</div>
+                <div className="text-xl text-cyan-600">
+                  ₹ {calculateTotal()}
+                </div>
+              </div>
+
+              {/* Form Fields */}
+              <div className="space-y-4">
+                <div>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="Full Name *"
+                    disabled={paymentStatus === "processing"}
+                    className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:opacity-50"
+                  />
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="anonymous"
+                    name="isAnonymous"
+                    checked={formData.isAnonymous}
+                    onChange={handleInputChange}
+                    disabled={paymentStatus === "processing"}
+                    className="mt-1 w-4 h-4 text-cyan-500 border-gray-300 rounded focus:ring-cyan-500 disabled:opacity-50"
+                  />
+                  <label htmlFor="anonymous" className="text-sm text-gray-700">
+                    Make my contribution anonymous
+                  </label>
+                </div>
+
+                <div>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="Email Address *"
+                    disabled={paymentStatus === "processing"}
+                    className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:opacity-50"
+                    inputMode="email"
+                  />
+                </div>
+
+                <div>
+                  <div className="flex gap-2">
+                    <div className="flex items-center gap-1 px-3 py-3 border border-gray-300 rounded-lg bg-gray-50">
+                      <div className="w-4 h-3 bg-gradient-to-b from-orange-400 via-white to-green-500 rounded-sm"></div>
+                      <span className="text-sm font-medium">+91</span>
+                    </div>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      placeholder="Mobile Number *"
+                      disabled={paymentStatus === "processing"}
+                      className="flex-1 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:opacity-50"
+                      inputMode="tel"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Payment updates will be sent to this number
+                  </p>
+                </div>
+
+                <button
+                  onClick={handleSubmit}
+                  disabled={paymentStatus === "processing"}
+                  className="w-full bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-semibold py-4 rounded-lg transition-all duration-300 mt-4 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                >
+                  {paymentStatus === "processing" ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                      Processing...
+                    </div>
+                  ) : (
+                    "Proceed to Payment"
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>

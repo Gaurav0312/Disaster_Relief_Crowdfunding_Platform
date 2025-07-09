@@ -112,13 +112,6 @@ const ProjectCard = ({ project, onDonateClick, onViewClick }) => {
               </div>
             )}
           </div>
-
-          <button
-            onClick={handleHeartClick}
-            className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-md hover:bg-red-100 transition-colors"
-          >
-            <Heart size={20} className="text-gray-600 hover:text-red-500" />
-          </button>
         </div>
 
         <div className="p-4 sm:p-6 flex flex-col flex-1 justify-between">

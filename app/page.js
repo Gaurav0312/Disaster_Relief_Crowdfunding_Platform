@@ -10,7 +10,6 @@ import AboutUs from "@/components/AboutUs";
 import CreateCampaignModal from "@/components/CreateCampaignModal";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 
 // Animation variants
 const containerVariants = {
@@ -283,7 +282,7 @@ const DisasterReliefCrowdfunding = () => {
     },
     {
       id: 2,
-      title: "Ahmedabad Air India Crash Relief",
+      title: "Ahmedabad Plane Crash Relief",
       category: "aviation",
       location: "Ahmedabad, Gujarat",
       description:
@@ -688,53 +687,55 @@ const DisasterReliefCrowdfunding = () => {
           }}
         />
         {/* Hero Section with animations */}
-        <motion.section
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-          className="relative z-10 flex items-center justify-center min-h-screen py-20 text-center"
-        >
-          <motion.div variants={fadeIn} className="max-w-4xl mx-auto px-4">
-            <motion.h2
-              variants={slideUp}
-              className="text-5xl md:text-6xl font-bold text-gray-800 mb-6"
-            >
-              Help Communities
-              <motion.span
+        {activeTab !== "about" && activeTab !== "emergency" && (
+          <motion.section
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+            className="relative z-10 flex items-center justify-center min-h-screen py-20 text-center"
+          >
+            <motion.div variants={fadeIn} className="max-w-4xl mx-auto px-4">
+              <motion.h2
                 variants={slideUp}
-                className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                className="text-5xl md:text-6xl font-bold text-gray-800 mb-6"
               >
-                Rebuild After Disasters
-              </motion.span>
-            </motion.h2>
+                Help Communities
+                <motion.span
+                  variants={slideUp}
+                  className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                >
+                  Rebuild After Disasters
+                </motion.span>
+              </motion.h2>
 
-            <motion.p
-              variants={fadeIn}
-              className="text-xl text-gray-900 mb-8 max-w-2xl mx-auto"
-            >
-              Every donation makes a difference. Support families and
-              communities recovering from natural disasters worldwide.
-            </motion.p>
+              <motion.p
+                variants={fadeIn}
+                className="text-xl text-gray-900 mb-8 max-w-2xl mx-auto"
+              >
+                Every donation makes a difference. Support families and
+                communities recovering from natural disasters worldwide.
+              </motion.p>
 
-            <motion.div
-              variants={containerVariants}
-              className="flex flex-wrap justify-center gap-8 mt-12"
-            >
-              <motion.div variants={itemVariants} className="text-center">
-                <div className="text-4xl font-bold text-blue-600">₹3.5M+</div>
-                <div className="text-gray-800">Funds Raised</div>
-              </motion.div>
-              <motion.div variants={itemVariants} className="text-center">
-                <div className="text-4xl font-bold text-purple-600">12K+</div>
-                <div className="text-gray-800">People Helped</div>
-              </motion.div>
-              <motion.div variants={itemVariants} className="text-center">
-                <div className="text-4xl font-bold text-pink-600">5+</div>
-                <div className="text-gray-800">Active Campaigns</div>
+              <motion.div
+                variants={containerVariants}
+                className="flex flex-wrap justify-center gap-8 mt-12"
+              >
+                <motion.div variants={itemVariants} className="text-center">
+                  <div className="text-4xl font-bold text-blue-600">₹3.5M+</div>
+                  <div className="text-gray-800">Funds Raised</div>
+                </motion.div>
+                <motion.div variants={itemVariants} className="text-center">
+                  <div className="text-4xl font-bold text-purple-600">12K+</div>
+                  <div className="text-gray-800">People Helped</div>
+                </motion.div>
+                <motion.div variants={itemVariants} className="text-center">
+                  <div className="text-4xl font-bold text-pink-600">5+</div>
+                  <div className="text-gray-800">Active Campaigns</div>
+                </motion.div>
               </motion.div>
             </motion.div>
-          </motion.div>
-        </motion.section>
+          </motion.section>
+        )}
 
         {/* Main Content with animated transitions between tabs */}
         <main className="max-w mx-auto px-4 sm:px-6 lg:px-8 pb-20">

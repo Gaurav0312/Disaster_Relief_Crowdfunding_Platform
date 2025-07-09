@@ -30,6 +30,17 @@ const SignInModal = ({ isOpen, onClose, initialTab = "login" }) => {
     }
   }, [isOpen, initialTab]);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isOpen]);
+
   const handleTabChange = (tab) => {
     // Clear form data when switching tabs
     setFullName("");

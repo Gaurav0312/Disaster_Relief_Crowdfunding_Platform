@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { motion } from "framer-motion";
-import { AlertCircle, Share2, Heart, MapPin, Clock, Users } from "lucide-react";
+import { AlertCircle, Share2, MapPin, Clock, Users } from "lucide-react";
 import {
   FacebookShareButton,
   FacebookIcon,
@@ -163,7 +163,7 @@ const ProjectCard = ({ project, onDonateClick, onViewClick }) => {
               {" "}
               {formatCurrency(project.raised)} raised
             </div>
-            <div className="text-gray-500">
+            <div className="text-sm text-gray-500">
               {" "}
               of {formatCurrency(project.goal)}
             </div>

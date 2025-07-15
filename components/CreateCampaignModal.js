@@ -249,8 +249,9 @@ const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }) => {
                         onChange={handleInputChange}
                         type="number"
                         placeholder="Enter amount"
-                        className="w-full pl-10 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="no-spinner w-full pl-10 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         disabled={isUploading}
+                        onWheel={e => e.target.blur()}
                       />
                     </div>
                   </div>

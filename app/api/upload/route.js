@@ -1,4 +1,3 @@
-// app/api/upload/route.js
 import { v2 as cloudinary } from 'cloudinary';
 import { NextResponse } from 'next/server';
 

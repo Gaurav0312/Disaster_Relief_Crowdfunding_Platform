@@ -1,4 +1,3 @@
-// app/about-us/page.jsx
 import AboutUs from '@/components/AboutUs';
 
 export default function AboutUsPage() {

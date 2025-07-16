@@ -13,14 +13,25 @@ import {
   Users,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import DonationModal from "@/components/DonationModal";
-import SignInModal from "@/components/SignInModal";
-import DonorDashboard from "@/components/DonorDashboard";
 import ProjectCard from "@/components/ProjectCard";
-import AboutUs from "@/components/AboutUs";
-import CreateCampaignModal from "@/components/CreateCampaignModal";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+
+import dynamic from "next/dynamic";
+const DonationModal = dynamic(() => import("@/components/DonationModal"), {
+  ssr: false,
+});
+const SignInModal = dynamic(() => import("@/components/SignInModal"), {
+  ssr: false,
+});
+const CreateCampaignModal = dynamic(
+  () => import("@/components/CreateCampaignModal"),
+  { ssr: false }
+);
+const AboutUs = dynamic(() => import("@/components/AboutUs"), { ssr: false });
+const DonorDashboard = dynamic(() => import("@/components/DonorDashboard"), {
+  ssr: false,
+});
 
 // Animation variants
 const containerVariants = {
@@ -121,17 +132,15 @@ const UserMenu = ({ user, onSignOut }) => {
         aria-haspopup="true"
         aria-label="User menu"
       >
-        <img
+        <Image
           src={
             user.image ||
-            `https://ui-avatars.com/api/?name=${encodeURIComponent(
-              user.name
-            )}&background=random`
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`
           }
           alt={user.name}
-          className="w-10 h-10 sm:w-9 sm:h-9 rounded-full border-2 border-white shadow-sm"
           width={40}
           height={40}
+          className="w-10 h-10 sm:w-9 sm:h-9 rounded-full border-2 border-white shadow-sm"
           loading="lazy"
         />
         <span className="ml-2 font-medium text-gray-800 truncate max-w-[100px] sm:max-w-[120px]">
@@ -165,15 +174,15 @@ const UserMenu = ({ user, onSignOut }) => {
             {/* Mobile header (only shows on mobile) */}
             <div className="sm:hidden flex items-center justify-between px-4 py-3 border-b border-gray-200 sticky top-0 bg-white z-10">
               <div className="flex items-center">
-                <img
+                <Image
                   src={
                     user.image ||
-                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      user.name
-                    )}&background=random`
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`
                   }
                   alt={user.name}
-                  className="w-10 h-10 rounded-full border-2 border-white mr-3"
+                  width={10}
+                  height={10}
+                  className="rounded-full border-2 border-white mr-3"
                 />
                 <div>
                   <p className="font-medium text-gray-900">{user.name}</p>
@@ -351,7 +360,8 @@ const DisasterReliefCrowdfunding = () => {
       donors: 932,
       daysLeft: 42,
       urgent: false,
-      imageUrl: "/UttarakhandWildfire1.jpg",
+      imageUrl:
+        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586186/campaign_covers/ql3puauqh9lymbrwt6cc.jpg",
     },
     {
       id: 6,
@@ -775,8 +785,17 @@ const DisasterReliefCrowdfunding = () => {
           </div> */}
 
                   {/* Enhanced Stats */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                    <div className="group bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200">
+                  <motion.div
+                    className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={containerVariants}
+                  >
+                    <motion.div
+                      variants={itemVariants}
+                      className="group bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200"
+                    >
                       <div className="text-5xl font-black bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent mb-3">
                         ₹3.5M+
                       </div>
@@ -787,9 +806,12 @@ const DisasterReliefCrowdfunding = () => {
                         <IndianRupee className="w-4 h-4" />
                         <span>Total Fund Raised</span>
                       </div>
-                    </div>
+                    </motion.div>
 
-                    <div className="group bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200">
+                    <motion.div
+                      variants={itemVariants}
+                      className="group bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200"
+                    >
                       <div className="text-5xl font-black bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent mb-3">
                         12K+
                       </div>
@@ -800,9 +822,12 @@ const DisasterReliefCrowdfunding = () => {
                         <Users className="w-4 h-4" />
                         <span>Across Indian states</span>
                       </div>
-                    </div>
+                    </motion.div>
 
-                    <div className="group bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200">
+                    <motion.div
+                      variants={itemVariants}
+                      className="group bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200"
+                    >
                       <div className="text-5xl font-black bg-gradient-to-r from-pink-600 to-pink-700 bg-clip-text text-transparent mb-3">
                         5+
                       </div>
@@ -813,8 +838,8 @@ const DisasterReliefCrowdfunding = () => {
                         <Globe className="w-4 h-4" />
                         <span>Real-time updates</span>
                       </div>
-                    </div>
-                  </div>
+                    </motion.div>
+                  </motion.div>
 
                   {/* Impact Indicators */}
                   <div className="mt-16 flex flex-wrap justify-center gap-6 text-sm text-gray-600">
@@ -879,9 +904,10 @@ const DisasterReliefCrowdfunding = () => {
               >
                 {/* Search and Filter */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={fadeIn}
                   className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 mb-8 border border-white/20"
                 >
                   <div className="flex flex-col md:flex-row gap-4">
@@ -955,6 +981,9 @@ const DisasterReliefCrowdfunding = () => {
               >
                 <motion.div
                   variants={scaleUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
                   className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 sm:p-12 border border-white/20 max-w-3xl mx-auto"
                 >
                   <div className="flex justify-center mb-6">
@@ -1025,6 +1054,9 @@ const DisasterReliefCrowdfunding = () => {
                         <motion.div
                           key={index}
                           variants={itemVariants}
+                          initial="hidden"
+                          whileInView="visible"
+                          viewport={{ once: true }}
                           className="bg-blue-50 p-4 sm:p-6 rounded-2xl"
                         >
                           <div className="text-blue-600 font-bold mb-2">

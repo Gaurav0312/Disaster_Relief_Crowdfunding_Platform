@@ -10,6 +10,7 @@ import {
   WhatsappShareButton,
   WhatsappIcon,
 } from "react-share";
+import Image from "next/image";
 import DonationModal from "@/components/DonationModal";
 
 const ProjectCard = ({ project, onDonateClick, onViewClick }) => {
@@ -101,10 +102,15 @@ const ProjectCard = ({ project, onDonateClick, onViewClick }) => {
       >
         <div className="relative">
           <div className="h-48 sm:h-56 md:h-48 relative overflow-hidden">
-            <img
-              src={project.imageUrl}
+            <Image
+              src={project.imageUrl.replace(
+                "/upload/",
+                "/upload/f_auto,q_auto/"
+              )}
               alt={project.title}
-              className="w-full h-full object-cover"
+              width={500}
+              height={300}
+              className="rounded-xl w-full object-cover"
             />
             {project.urgent && (
               <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center">

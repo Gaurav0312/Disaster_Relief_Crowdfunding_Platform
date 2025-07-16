@@ -1,12 +1,58 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, IndianRupee, Image as ImageIcon, Loader2 } from "lucide-react";
+import LocationSelect from "./LocationSelect";
 
 const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const pushedState = useRef(false);
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      // Check if this popstate event is for our modal
+      if (pushedState.current && isOpen) {
+        // Prevent default browser navigation
+        event.preventDefault();
+
+        // Close the modal
+        onClose();
+        pushedState.current = false;
+
+        // Push the current state back to prevent navigation
+        window.history.pushState({ modalOpen: false }, "");
+      }
+    };
+
+    if (isOpen && !pushedState.current) {
+      // Push a new state when modal opens
+      window.history.pushState({ modalOpen: true }, "");
+      pushedState.current = true;
+      window.addEventListener("popstate", handlePopState);
+    }
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [isOpen, onClose]);
+
+  // Clean up when modal closes normally (not via back button)
+  useEffect(() => {
+    if (!isOpen && pushedState.current) {
+      // Modal was closed normally, remove the pushed state
+      pushedState.current = false;
+      // Go back to remove the pushed state from history
+      if (window.history.length > 1) {
+        window.history.back();
+      }
+    }
+  }, [isOpen]);
+
   const [formData, setFormData] = useState({
     title: "",
     category: "",
-    location: "",
+    state: "",
+    city: "",
+    pincode: "",
     goal: "",
     description: "",
   });
@@ -32,7 +78,7 @@ const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }) => {
       }
 
       // Validate file type
-      if (!file.type.startsWith('image/')) {
+      if (!file.type.startsWith("image/")) {
         setUploadError("Only image files are allowed");
         return;
       }
@@ -59,7 +105,15 @@ const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }) => {
       setUploadError("");
 
       // Validate form data
-      if (!formData.title || !formData.category || !formData.location || !formData.goal || !formData.description) {
+      if (
+        !formData.title ||
+        !formData.category ||
+        !formData.state ||
+        !formData.city ||
+        !formData.pincode ||
+        !formData.goal ||
+        !formData.description
+      ) {
         setUploadError("Please fill in all required fields");
         setIsUploading(false);
         return;
@@ -68,7 +122,7 @@ const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }) => {
       let imageUrl = "";
       if (selectedFile) {
         console.log("Starting image upload...");
-        
+
         const imageFormData = new FormData();
         imageFormData.append("file", selectedFile);
 
@@ -78,7 +132,7 @@ const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }) => {
         });
 
         console.log("Upload response status:", response.status);
-        
+
         if (!response.ok) {
           const errorData = await response.json();
           console.error("Upload error response:", errorData);
@@ -112,7 +166,7 @@ const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }) => {
         console.log("Campaign saved successfully");
         onCampaignCreated();
         onClose();
-        
+
         // Reset form
         setFormData({
           title: "",
@@ -133,8 +187,13 @@ const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }) => {
         } else {
           // If not JSON, log the HTML response
           const htmlResponse = await saveResponse.text();
-          console.error("Received HTML response instead of JSON:", htmlResponse);
-          throw new Error("Server returned an error page instead of JSON response");
+          console.error(
+            "Received HTML response instead of JSON:",
+            htmlResponse
+          );
+          throw new Error(
+            "Server returned an error page instead of JSON response"
+          );
         }
       }
     } catch (error) {
@@ -214,24 +273,19 @@ const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }) => {
                       <option value="Earthquake">Earthquake</option>
                       <option value="Flood">Flood</option>
                       <option value="Wildfire">Wildfire</option>
-                      <option value="Hurricane/Typhoon">Hurricane/Typhoon</option>
+                      <option value="Hurricane/Typhoon">
+                        Hurricane/Typhoon
+                      </option>
                       <option value="Tsunami">Tsunami</option>
                       <option value="Other">Other</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                      Location *
-                    </label>
-                    <input
-                      name="location"
-                      value={formData.location}
-                      onChange={handleInputChange}
-                      type="text"
-                      placeholder="City, Country"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      disabled={isUploading}
+                    <LocationSelect
+                      formData={formData}
+                      setFormData={setFormData}
+                      isUploading={isUploading}
                     />
                   </div>
 
@@ -251,7 +305,7 @@ const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }) => {
                         placeholder="Enter amount"
                         className="no-spinner w-full pl-10 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         disabled={isUploading}
-                        onWheel={e => e.target.blur()}
+                        onWheel={(e) => e.target.blur()}
                       />
                     </div>
                   </div>
@@ -271,17 +325,49 @@ const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }) => {
                     />
                   </div>
 
-                  <motion.div variants={scaleUp} className="bg-white rounded-2xl">
+                  <motion.div
+                    variants={scaleUp}
+                    className="bg-white rounded-2xl"
+                  >
                     <div className="space-y-6">
                       <div>
                         <label className="block text-gray-700 font-medium mb-2">
                           Cover Image
                         </label>
                         <div
-                          className={`border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-blue-400 transition-colors ${
-                            isUploading ? 'pointer-events-none opacity-50' : ''
-                          }`}
+                          className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${
+                            isDragging
+                              ? "border-blue-500 bg-blue-50"
+                              : "border-gray-300"
+                          } ${isUploading ? "pointer-events-none opacity-50" : "hover:border-blue-400"}`}
                           onClick={handleImageClick}
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            if (!isUploading) setIsDragging(true);
+                          }}
+                          onDragLeave={() => setIsDragging(false)}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            setIsDragging(false);
+                            if (isUploading) return;
+
+                            const file = e.dataTransfer.files?.[0];
+                            if (file) {
+                              if (file.size > 5 * 1024 * 1024) {
+                                setUploadError(
+                                  "File size must be less than 5MB"
+                                );
+                                return;
+                              }
+                              if (!file.type.startsWith("image/")) {
+                                setUploadError("Only image files are allowed");
+                                return;
+                              }
+                              setSelectedFile(file);
+                              setPreviewUrl(URL.createObjectURL(file));
+                              setUploadError("");
+                            }
+                          }}
                         >
                           {previewUrl ? (
                             <img
@@ -293,12 +379,17 @@ const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }) => {
                             <div className="text-gray-500">
                               <div className="flex justify-center mb-2">
                                 <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16 flex items-center justify-center">
-                                  <ImageIcon className="text-gray-500" size={32} />
+                                  <ImageIcon
+                                    className="text-gray-500"
+                                    size={32}
+                                  />
                                 </div>
                               </div>
                               <p>Drag & drop your image here</p>
                               <p className="text-sm mt-1">or click to browse</p>
-                              <p className="text-xs mt-1 text-gray-400">Max size: 5MB</p>
+                              <p className="text-xs mt-1 text-gray-400">
+                                Max size: 5MB
+                              </p>
                             </div>
                           )}
                           <input
@@ -321,11 +412,14 @@ const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }) => {
                         >
                           {isUploading ? (
                             <>
-                              <Loader2 className="animate-spin mr-2" size={20} />
+                              <Loader2
+                                className="animate-spin mr-2"
+                                size={20}
+                              />
                               Launching Campaign...
                             </>
                           ) : (
-                            'Launch Campaign'
+                            "Launch Campaign"
                           )}
                         </button>
                       </div>

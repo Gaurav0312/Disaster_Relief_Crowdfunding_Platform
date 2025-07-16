@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Users, Mail, Lock, X, AlertCircle } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,6 +14,48 @@ const SignInModal = ({ isOpen, onClose, initialTab = "login" }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("login"); // 'login' or 'register'
+
+  const pushedState = useRef(false);
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      // Check if this popstate event is for our modal
+      if (pushedState.current && isOpen) {
+        // Prevent default browser navigation
+        event.preventDefault();
+
+        // Close the modal
+        onClose();
+        pushedState.current = false;
+
+        // Push the current state back to prevent navigation
+        window.history.pushState({ modalOpen: false }, "");
+      }
+    };
+
+    if (isOpen && !pushedState.current) {
+      // Push a new state when modal opens
+      window.history.pushState({ modalOpen: true }, "");
+      pushedState.current = true;
+      window.addEventListener("popstate", handlePopState);
+    }
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [isOpen, onClose]);
+
+  // Clean up when modal closes normally (not via back button)
+  useEffect(() => {
+    if (!isOpen && pushedState.current) {
+      // Modal was closed normally, remove the pushed state
+      pushedState.current = false;
+      // Go back to remove the pushed state from history
+      if (window.history.length > 1) {
+        window.history.back();
+      }
+    }
+  }, [isOpen]);
 
   // Reset form when modal closes
   useEffect(() => {
@@ -292,8 +334,8 @@ const SignInModal = ({ isOpen, onClose, initialTab = "login" }) => {
                     {isLoading
                       ? "Processing..."
                       : activeTab === "login"
-                      ? "Sign In"
-                      : "Create Account"}
+                        ? "Sign In"
+                        : "Create Account"}
                   </button>
                 </div>
               </form>

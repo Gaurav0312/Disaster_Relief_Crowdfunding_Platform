@@ -1,3 +1,5 @@
+"use client";
+import React, { useEffect, useRef } from "react";
 import {
   Heart,
   CheckCircle,
@@ -7,7 +9,53 @@ import {
   Globe,
 } from "lucide-react";
 
-const AboutUs = () => {
+const AboutUs = ({ onClose, isOpen = true }) => {
+
+  const pushedState = useRef(false);
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      // Check if this popstate event is for our about modal
+      if (pushedState.current && isOpen) {
+        // Prevent default browser navigation
+        event.preventDefault();
+        
+        // Close the about modal
+        onClose();
+        pushedState.current = false;
+        
+        // Push the current state back to prevent navigation
+        window.history.pushState({ aboutOpen: false }, "");
+      }
+    };
+
+    if (isOpen && !pushedState.current) {
+      // Push a new state when about modal opens
+      window.history.pushState({ aboutOpen: true }, "");
+      pushedState.current = true;
+      window.addEventListener("popstate", handlePopState);
+    }
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [isOpen, onClose]);
+
+  // Clean up when modal closes normally (not via back button)
+  useEffect(() => {
+    if (!isOpen && pushedState.current) {
+      // Modal was closed normally, remove the pushed state
+      pushedState.current = false;
+      // Go back to remove the pushed state from history
+      if (window.history.length > 1) {
+        window.history.back();
+      }
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+
   return (
     <div className="text-center px-4 py-6 sm:px-6">
       <div className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 sm:p-12 border border-white/20 max-w-4xl mx-auto">

@@ -273,6 +273,10 @@ const DisasterReliefCrowdfunding = () => {
   const { data: session, status } = useSession();
   const [activeTab, setActiveTab] = useState("browse");
 
+  const handleSafeClose = () => {
+    setShowCreateModal(false);
+  };
+
   // Sample projects data with image URLs
   const sampleProjects = [
     {
@@ -287,7 +291,8 @@ const DisasterReliefCrowdfunding = () => {
       donors: 876,
       daysLeft: 12,
       urgent: true,
-      imageUrl: "/SuratFlood1.jpg",
+      imageUrl:
+        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752580688/campaign_covers/ntx4rpzmg9zxapgmct1y.jpg",
     },
     {
       id: 2,
@@ -301,7 +306,8 @@ const DisasterReliefCrowdfunding = () => {
       donors: 2340,
       daysLeft: 45,
       urgent: true,
-      imageUrl: "/AhmedabadCrash1.webp",
+      imageUrl:
+        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752581862/campaign_covers/tvtt8ptubqz5nganupwu.webp",
     },
     {
       id: 3,
@@ -315,7 +321,8 @@ const DisasterReliefCrowdfunding = () => {
       donors: 202,
       daysLeft: 2,
       urgent: true,
-      imageUrl: "/Delhiearthquake1.jpg",
+      imageUrl:
+        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586216/campaign_covers/qjmlkrbwce5j2kavya82.jpg",
     },
     {
       id: 4,
@@ -329,7 +336,8 @@ const DisasterReliefCrowdfunding = () => {
       donors: 1560,
       daysLeft: 25,
       urgent: true,
-      imageUrl: "/Assamphoto1.jpg",
+      imageUrl:
+        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586309/campaign_covers/nsh5otnyk2vkcrxf2pza.jpg",
     },
     {
       id: 5,
@@ -357,7 +365,8 @@ const DisasterReliefCrowdfunding = () => {
       donors: 487,
       daysLeft: 8,
       urgent: true,
-      imageUrl: "/KeralaFlood1.jpg",
+      imageUrl:
+        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582934/campaign_covers/pkcxbtccnjokvy5zwy8v.jpg",
     },
     {
       id: 7,
@@ -371,7 +380,8 @@ const DisasterReliefCrowdfunding = () => {
       donors: 1245,
       daysLeft: 21,
       urgent: true,
-      imageUrl: "/HimachalPhoto1.jpg",
+      imageUrl:
+        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582816/campaign_covers/jztexsr2yx1udhtyfmvj.jpg",
     },
   ];
 
@@ -411,7 +421,7 @@ const DisasterReliefCrowdfunding = () => {
     setActiveTab(tab);
     const params = new URLSearchParams(searchParams);
     params.set("tab", tab);
-    router.replace(`?${params.toString()}`);
+    router.push(`?${params.toString()}`);
   };
 
   return (
@@ -616,11 +626,14 @@ const DisasterReliefCrowdfunding = () => {
                   onClick={() => {
                     setActiveTab("about");
                     setIsMobileMenuOpen(false);
+                    router.push("?tab=about"); // Push a URL entry
+                    window.history.pushState({ aboutOpen: true }, "");
                   }}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg"
                 >
                   About Us
                 </button>
+
                 <button
                   onClick={() => {
                     setShowCreateModal(true);
@@ -692,55 +705,57 @@ const DisasterReliefCrowdfunding = () => {
         />
         <CreateCampaignModal
           isOpen={showCreateModal}
-          onClose={() => setShowCreateModal(false)}
+          onClose={handleSafeClose}
           onCampaignCreated={() => {
             setShowCreateModal(false);
             setShowLaunchModal(true);
           }}
         />
         {/* Hero Section with animations */}
-        {activeTab !== "about" && activeTab !== "emergency" && (
-          <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
-            {/* Animated Background Elements */}
-            <div className="absolute inset-0">
-              <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
-              <div className="absolute top-40 right-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse delay-1000"></div>
-              <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse delay-2000"></div>
-            </div>
+        {activeTab !== "about" &&
+          activeTab !== "emergency" &&
+          activeTab !== "dashboard" && (
+            <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+              {/* Animated Background Elements */}
+              <div className="absolute inset-0">
+                <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
+                <div className="absolute top-40 right-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse delay-1000"></div>
+                <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse delay-2000"></div>
+              </div>
 
-            {/* Grid Pattern Overlay */}
-            <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+              {/* Grid Pattern Overlay */}
+              <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
 
-            <div className="relative z-10 flex items-center justify-center min-h-screen py-20 px-4">
-              <div className="max-w-6xl mx-auto text-center">
-                {/* Trust Badge */}
-                <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 mb-8 shadow-lg border border-gray-200">
-                  <Shield className="w-5 h-5 text-green-600" />
-                  <span className="text-sm font-medium text-gray-700">
-                    Trusted by 50,000+ donors worldwide
-                  </span>
-                </div>
-
-                {/* Main Headline */}
-                <div className="mb-8">
-                  <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-gray-900 mb-4 leading-tight">
-                    Help Communities
-                    <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
-                      Rebuild & Recover
+              <div className="relative z-10 flex items-center justify-center min-h-screen py-20 px-4">
+                <div className="max-w-6xl mx-auto text-center">
+                  {/* Trust Badge */}
+                  <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 mb-8 shadow-lg border border-gray-200">
+                    <Shield className="w-5 h-5 text-green-600" />
+                    <span className="text-sm font-medium text-gray-700">
+                      Trusted by 50,000+ donors worldwide
                     </span>
-                  </h1>
+                  </div>
 
-                  <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto rounded-full mb-8"></div>
-                </div>
+                  {/* Main Headline */}
+                  <div className="mb-8">
+                    <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-gray-900 mb-4 leading-tight">
+                      Help Communities
+                      <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
+                        Rebuild & Recover
+                      </span>
+                    </h1>
 
-                {/* Enhanced Description */}
-                <p className="text-xl md:text-2xl text-gray-700 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
-                  Every donation creates ripples of hope. Join our mission to
-                  support families and communities rebuilding their lives after
-                  natural disasters.
-                </p>
+                    <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto rounded-full mb-8"></div>
+                  </div>
 
-                {/* 
+                  {/* Enhanced Description */}
+                  <p className="text-xl md:text-2xl text-gray-700 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
+                    Every donation creates ripples of hope. Join our mission to
+                    support families and communities rebuilding their lives
+                    after natural disasters.
+                  </p>
+
+                  {/* 
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
             <button className="group relative bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
               <span className="flex items-center gap-2">
@@ -759,97 +774,97 @@ const DisasterReliefCrowdfunding = () => {
             </button>
           </div> */}
 
-                {/* Enhanced Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                  <div className="group bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200">
-                    <div className="text-5xl font-black bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent mb-3">
-                      ₹3.5M+
+                  {/* Enhanced Stats */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                    <div className="group bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200">
+                      <div className="text-5xl font-black bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent mb-3">
+                        ₹3.5M+
+                      </div>
+                      <div className="text-gray-700 font-semibold text-lg mb-2">
+                        Funds Raised
+                      </div>
+                      <div className="flex items-center justify-center gap-2 text-green-600 text-sm">
+                        <IndianRupee className="w-4 h-4" />
+                        <span>Total Fund Raised</span>
+                      </div>
                     </div>
-                    <div className="text-gray-700 font-semibold text-lg mb-2">
-                      Funds Raised
+
+                    <div className="group bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200">
+                      <div className="text-5xl font-black bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent mb-3">
+                        12K+
+                      </div>
+                      <div className="text-gray-700 font-semibold text-lg mb-2">
+                        Lives Impacted
+                      </div>
+                      <div className="flex items-center justify-center gap-2 text-green-600 text-sm">
+                        <Users className="w-4 h-4" />
+                        <span>Across Indian states</span>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-center gap-2 text-green-600 text-sm">
-                      <IndianRupee className="w-4 h-4" />
-                      <span>Total Fund Raised</span>
+
+                    <div className="group bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200">
+                      <div className="text-5xl font-black bg-gradient-to-r from-pink-600 to-pink-700 bg-clip-text text-transparent mb-3">
+                        5+
+                      </div>
+                      <div className="text-gray-700 font-semibold text-lg mb-2">
+                        Active Campaigns
+                      </div>
+                      <div className="flex items-center justify-center gap-2 text-green-600 text-sm">
+                        <Globe className="w-4 h-4" />
+                        <span>Real-time updates</span>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="group bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200">
-                    <div className="text-5xl font-black bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent mb-3">
-                      12K+
+                  {/* Impact Indicators */}
+                  <div className="mt-16 flex flex-wrap justify-center gap-6 text-sm text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span>24/7 Emergency Response</span>
                     </div>
-                    <div className="text-gray-700 font-semibold text-lg mb-2">
-                      Lives Impacted
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-300"></div>
+                      <span>100% Transparency</span>
                     </div>
-                    <div className="flex items-center justify-center gap-2 text-green-600 text-sm">
-                      <Users className="w-4 h-4" />
-                      <span>Across Indian states</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-600"></div>
+                      <span>Direct Community Impact</span>
                     </div>
-                  </div>
-
-                  <div className="group bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200">
-                    <div className="text-5xl font-black bg-gradient-to-r from-pink-600 to-pink-700 bg-clip-text text-transparent mb-3">
-                      5+
-                    </div>
-                    <div className="text-gray-700 font-semibold text-lg mb-2">
-                      Active Campaigns
-                    </div>
-                    <div className="flex items-center justify-center gap-2 text-green-600 text-sm">
-                      <Globe className="w-4 h-4" />
-                      <span>Real-time updates</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Impact Indicators */}
-                <div className="mt-16 flex flex-wrap justify-center gap-6 text-sm text-gray-600">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span>24/7 Emergency Response</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-300"></div>
-                    <span>100% Transparency</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-600"></div>
-                    <span>Direct Community Impact</span>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <style jsx>{`
-              @keyframes gradient {
-                0% {
-                  background-position: 0% 50%;
+              <style jsx>{`
+                @keyframes gradient {
+                  0% {
+                    background-position: 0% 50%;
+                  }
+                  50% {
+                    background-position: 100% 50%;
+                  }
+                  100% {
+                    background-position: 0% 50%;
+                  }
                 }
-                50% {
-                  background-position: 100% 50%;
-                }
-                100% {
-                  background-position: 0% 50%;
-                }
-              }
 
-              .animate-gradient {
-                background-size: 200% 200%;
-                animation: gradient 3s ease infinite;
-              }
+                .animate-gradient {
+                  background-size: 200% 200%;
+                  animation: gradient 3s ease infinite;
+                }
 
-              .bg-grid-pattern {
-                background-image:
-                  linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-                  linear-gradient(
-                    90deg,
-                    rgba(0, 0, 0, 0.1) 1px,
-                    transparent 1px
-                  );
-                background-size: 20px 20px;
-              }
-            `}</style>
-          </section>
-        )}
+                .bg-grid-pattern {
+                  background-image:
+                    linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+                    linear-gradient(
+                      90deg,
+                      rgba(0, 0, 0, 0.1) 1px,
+                      transparent 1px
+                    );
+                  background-size: 20px 20px;
+                }
+              `}</style>
+            </section>
+          )}
 
         {/* Main Content with animated transitions between tabs */}
         <main className="max-w mx-auto px-4 sm:px-6 lg:px-8 pb-20">
@@ -1025,7 +1040,13 @@ const DisasterReliefCrowdfunding = () => {
                 </motion.div>
               </motion.div>
             )}
-            {activeTab === "about" && <AboutUs />}
+            {activeTab === "about" && (
+              <AboutUs
+                key="about"
+                isOpen={activeTab === "about"}
+                onClose={() => setActiveTab("browse")}
+              />
+            )}
 
             {/* Add Dashboard tab */}
             {activeTab === "dashboard" && (

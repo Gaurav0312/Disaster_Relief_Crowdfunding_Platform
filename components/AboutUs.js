@@ -10,27 +10,21 @@ import {
 } from "lucide-react";
 
 const AboutUs = ({ onClose, isOpen = true }) => {
-
   const pushedState = useRef(false);
 
   useEffect(() => {
     const handlePopState = (event) => {
-      // Check if this popstate event is for our about modal
       if (pushedState.current && isOpen) {
-        // Prevent default browser navigation
         event.preventDefault();
-        
-        // Close the about modal
+
         onClose();
         pushedState.current = false;
-        
-        // Push the current state back to prevent navigation
+
         window.history.pushState({ aboutOpen: false }, "");
       }
     };
 
     if (isOpen && !pushedState.current) {
-      // Push a new state when about modal opens
       window.history.pushState({ aboutOpen: true }, "");
       pushedState.current = true;
       window.addEventListener("popstate", handlePopState);
@@ -54,7 +48,6 @@ const AboutUs = ({ onClose, isOpen = true }) => {
   }, [isOpen]);
 
   if (!isOpen) return null;
-
 
   return (
     <div className="text-center px-4 py-6 sm:px-6">

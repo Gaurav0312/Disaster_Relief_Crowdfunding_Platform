@@ -101,7 +101,7 @@ const Footer = () => {
                 </span>
               </div>
               <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 shadow-sm border border-gray-200">
-                <IN className="w-4 h-4 text-purple-600" />
+                <IN className="w-4 h-4 " />
                 <span className="text-sm font-medium text-gray-700">India</span>
               </div>
             </div>

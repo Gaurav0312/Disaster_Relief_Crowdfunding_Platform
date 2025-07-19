@@ -14,7 +14,7 @@
     "country-flag-icons": "^1.5.19",
     "country-state-city": "^3.2.1",
     "crypto-js": "^4.2.0",
-    "framer-motion": "^12.18.1",
+    "framer-motion": "^12.23.6",
     "lucide-react": "^0.513.0",
     "mongodb": "^6.17.0",
     "mongoose": "^8.15.2",

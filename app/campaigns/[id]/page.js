@@ -1,16 +1,26 @@
 "use client";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import CampaignDetailPage from "@/components/CampaignDetailPage";
 
 export default function CampaignDetail({ params }) {
   const router = useRouter();
 
-  // Safe Back Function
-  const handleBack = () => {
-    if (typeof window !== "undefined" && window.history.length > 1) {
-      router.back(); // If browser history exists, go back
-    } else {
-      router.push("/"); // If no history, redirect to home
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, []);
+
+
+    const handleBack = () => {
+    if (typeof window !== "undefined") {
+      // Check if there's history to go back to
+      if (window.history.length > 1) {
+        // Use router.back() to maintain scroll position
+        router.back();
+      } else {
+        // If no history, redirect to home with scroll restoration
+        router.push("/", { scroll: false });
+      }
     }
   };
 

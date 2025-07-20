@@ -24,7 +24,7 @@ export const sampleProjects = [
     daysLeft: 12,
     urgent: true,
     imageUrl:
-      "https://res.cloudinary.com/dxqerqng1/image/upload/v1752580688/campaign_covers/ntx4rpzmg9zxapgmct1y.jpg",
+      "/SuratFlood1.webp",
   },
   {
     id: 2,
@@ -39,7 +39,7 @@ export const sampleProjects = [
     daysLeft: 45,
     urgent: true,
     imageUrl:
-      "https://res.cloudinary.com/dxqerqng1/image/upload/v1752581862/campaign_covers/tvtt8ptubqz5nganupwu.webp",
+      "/AhmedabadCrash1.webp",
   },
   {
     id: 3,
@@ -54,7 +54,7 @@ export const sampleProjects = [
     daysLeft: 2,
     urgent: true,
     imageUrl:
-      "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586216/campaign_covers/qjmlkrbwce5j2kavya82.jpg",
+      "/DelhiEarthquake1.webp",
   },
   {
     id: 4,
@@ -69,7 +69,7 @@ export const sampleProjects = [
     daysLeft: 25,
     urgent: true,
     imageUrl:
-      "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586309/campaign_covers/nsh5otnyk2vkcrxf2pza.jpg",
+      "/Assamphoto1.webp",
   },
   {
     id: 5,
@@ -84,7 +84,7 @@ export const sampleProjects = [
     daysLeft: 42,
     urgent: false,
     imageUrl:
-      "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586186/campaign_covers/ql3puauqh9lymbrwt6cc.jpg",
+      "/UttarakhandWildfire1.webp",
   },
   {
     id: 6,
@@ -99,7 +99,7 @@ export const sampleProjects = [
     daysLeft: 8,
     urgent: true,
     imageUrl:
-      "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582934/campaign_covers/pkcxbtccnjokvy5zwy8v.jpg",
+      "/KeralaFlood1.webp",
   },
   {
     id: 7,
@@ -114,6 +114,6 @@ export const sampleProjects = [
     daysLeft: 21,
     urgent: true,
     imageUrl:
-      "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582816/campaign_covers/jztexsr2yx1udhtyfmvj.jpg",
+      "/HimachalPhoto1.webp",
   },
 ];

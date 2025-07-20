@@ -76,12 +76,12 @@ const CampaignDetailPage = ({ campaignId, onBack }) => {
       dateCreated: "June 24, 2025",
       lastUpdate: "30 minutes ago",
       imageUrl:
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752580688/campaign_covers/ntx4rpzmg9zxapgmct1y.jpg",
+        "/SuratFlood1.webp",
       gallery: [
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752580688/campaign_covers/ntx4rpzmg9zxapgmct1y.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752581433/campaign_covers/jfhiggmf7hrf06acnag4.avif",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752581612/campaign_covers/vcjql7uzo5epu7fkp8ym.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752581753/campaign_covers/lb23s2un1blgyuox9ukt.png",
+        "/SuratFlood1.webp",
+        "/SuratFlood2.webp",
+        "/SuratFlood3.webp",
+        "/SuratFlood4.webp",
       ],
       updates: [
         {
@@ -205,12 +205,12 @@ const CampaignDetailPage = ({ campaignId, onBack }) => {
       dateCreated: "June 13, 2025",
       lastUpdate: "1 hour ago",
       imageUrl:
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752581862/campaign_covers/tvtt8ptubqz5nganupwu.webp",
+        "/AhmedabadCrash1.webp",
       gallery: [
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752581862/campaign_covers/tvtt8ptubqz5nganupwu.webp",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582104/campaign_covers/smarp29bgnrhxegkuypy.webp",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582135/campaign_covers/ewwschrv5esvgrfnybve.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582157/campaign_covers/crtmk5p19t8bnb2ywqlj.jpg",
+        "/AhmedabadCrash1.webp",
+        "/AhmedabadCrash2.webp",
+        "/AhmedabadCrash3.webp",
+        "/AhmedabadCrash4.webp",
       ],
       updates: [
         {
@@ -353,12 +353,12 @@ const CampaignDetailPage = ({ campaignId, onBack }) => {
       verified: true,
       dateCreated: "June 16, 2025",
       lastUpdate: "2 hours ago",
-      imageUrl: "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586216/campaign_covers/qjmlkrbwce5j2kavya82.jpg",
+      imageUrl: "/DelhiEarthquake1.webp",
       gallery: [
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586216/campaign_covers/qjmlkrbwce5j2kavya82.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582736/campaign_covers/atp87bthmangsjjwrbyb.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582713/campaign_covers/mhjig5zfrca4emcn6ctq.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582687/campaign_covers/j8wajiub3u2fwk4pdfxi.jpg",
+        "/DelhiEarthquake1.webp",
+        "/DelhiEarthquake2.webp",
+        "/DelhiEarthquake3.webp",
+        "/DelhiEarthquake4.webp",
       ],
       updates: [
         {
@@ -475,12 +475,12 @@ const CampaignDetailPage = ({ campaignId, onBack }) => {
       verified: true,
       dateCreated: "June 10, 2025",
       lastUpdate: "4 hours ago",
-      imageUrl: "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586309/campaign_covers/nsh5otnyk2vkcrxf2pza.jpg",
+      imageUrl: "/Assamphoto1.webp",
       gallery: [
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586309/campaign_covers/nsh5otnyk2vkcrxf2pza.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586330/campaign_covers/mjk1azdwjvgw02npp53e.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586281/campaign_covers/qezqltwot2kkbyxolco1.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586257/campaign_covers/nvxhd1lsky5qznijch6h.jpg",
+        "/Assamphoto1.webp",
+        "/Assamphoto2.webp",
+        "/Assamphoto3.webp",
+        "/Assamphoto4.webp",
       ],
       updates: [
         {
@@ -586,12 +586,12 @@ const CampaignDetailPage = ({ campaignId, onBack }) => {
       verified: true,
       dateCreated: "May 30, 2025",
       lastUpdate: "6 hours ago",
-      imageUrl: "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586186/campaign_covers/ql3puauqh9lymbrwt6cc.jpg",
+      imageUrl: "/UttarakhandWildfire1.webp",
       gallery: [
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586186/campaign_covers/ql3puauqh9lymbrwt6cc.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586143/campaign_covers/osbngncw6rccwtpkpboe.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586115/campaign_covers/flk6ezwdl2owvcwf8lcb.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586088/campaign_covers/ndia89sgu3enakexy52e.jpg",
+        "/UttarakhandWildfire1.webp",
+        "/UttarakhandWildfire2.webp",
+        "/UttarakhandWildfire3.webp",
+        "/UttarakhandWildfire4.webp",
       ],
       updates: [
         {
@@ -710,12 +710,12 @@ const CampaignDetailPage = ({ campaignId, onBack }) => {
       verified: true,
       dateCreated: "June 15, 2025",
       lastUpdate: "3 hours ago",
-      imageUrl: "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582934/campaign_covers/pkcxbtccnjokvy5zwy8v.jpg",
+      imageUrl: "/KeralaFlood1.webp",
       gallery: [
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582934/campaign_covers/pkcxbtccnjokvy5zwy8v.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752586050/campaign_covers/ey1smbngnlfj1umjeyx9.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582911/campaign_covers/sgeek2xige10bq6urb8b.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582886/campaign_covers/lbfa3vw1qmxhj9obrt0c.jpg",
+        "/KeralaFlood1.webp",
+        "/KeralaFlood2.webp",
+        "/KeralaFlood3.webp",
+        "/KeralaFlood4.webp",
       ],
       updates: [
         {
@@ -838,12 +838,12 @@ const CampaignDetailPage = ({ campaignId, onBack }) => {
       verified: true,
       dateCreated: "June 13, 2025",
       lastUpdate: "5 hours ago",
-      imageUrl: "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582816/campaign_covers/jztexsr2yx1udhtyfmvj.jpg",
+      imageUrl: "/HimachalPhoto1.webp",
       gallery: [
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582816/campaign_covers/jztexsr2yx1udhtyfmvj.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582842/campaign_covers/eofzqxradkmjz0jljnan.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582785/campaign_covers/umppplcd8hfh5t6p4vwg.jpg",
-        "https://res.cloudinary.com/dxqerqng1/image/upload/v1752582761/campaign_covers/oospjkwatcvrkiua6msl.jpg",
+        "/HimachalPhoto1.webp",
+        "/HimachalPhoto2.webp",
+        "/HimachalPhoto3.webp",
+        "/HimachalPhoto4.webp",
       ],
       updates: [
         {

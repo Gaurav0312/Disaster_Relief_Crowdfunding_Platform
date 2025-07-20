@@ -54,7 +54,7 @@ export const sampleProjects = [
     daysLeft: 2,
     urgent: true,
     imageUrl:
-      "/DelhiEarthquake1.webp",
+      "/Delhiearthquake1.webp",
   },
   {
     id: 4,

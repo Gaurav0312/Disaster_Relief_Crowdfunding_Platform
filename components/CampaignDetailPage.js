@@ -353,12 +353,12 @@ const CampaignDetailPage = ({ campaignId, onBack }) => {
       verified: true,
       dateCreated: "June 16, 2025",
       lastUpdate: "2 hours ago",
-      imageUrl: "/DelhiEarthquake1.webp",
+      imageUrl: "/Delhiearthquake1.webp",
       gallery: [
-        "/DelhiEarthquake1.webp",
-        "/DelhiEarthquake2.webp",
-        "/DelhiEarthquake3.webp",
-        "/DelhiEarthquake4.webp",
+        "/Delhiearthquake1.webp",
+        "/Delhiearthquake2.webp",
+        "/Delhiearthquake3.webp",
+        "/Delhiearthquake4.webp",
       ],
       updates: [
         {

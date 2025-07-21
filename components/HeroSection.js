@@ -117,7 +117,7 @@ export default function HeroSection({ projects = [], handleDonateClick }) {
         <div className="max-w-4xl mx-auto text-center w-full">
           {/* Trust Badge */}
           <div
-            className={`inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-2 sm:px-4 sm:py-2 mb-6 shadow-lg border border-gray-200/50 transition-all duration-700 ${
+            className={`inline-flex  items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-2 sm:px-4 sm:py-2 mb-6 shadow-lg border border-gray-200/50 transition-all duration-700 ${
               isLoaded
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 -translate-y-4"
@@ -194,7 +194,7 @@ export default function HeroSection({ projects = [], handleDonateClick }) {
               colorClass="bg-gradient-to-r from-blue-600 to-blue-700"
             />
             <AnimatedCounter
-              value="12K+"
+              value="12.0K+"
               text="Lives Impacted"
               icon={Users}
               colorClass="bg-gradient-to-r from-purple-600 to-purple-700"

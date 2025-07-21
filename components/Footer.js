@@ -22,6 +22,7 @@ import {
   FaTwitter,
 } from "react-icons/fa";
 
+
 import Link from "next/link";
 
 const Footer = () => {
@@ -51,8 +52,8 @@ const Footer = () => {
   };
 
   const links = [
-    { label: "About Us", href: "/about_us" },
-    { label: "Live Campaigns", href: "/campaigns/id" },
+    { label: "About Us", href: "/?tab=about" },
+    { label: "Live Campaigns", href: "/?tab=browse" },
   ];
 
   return (

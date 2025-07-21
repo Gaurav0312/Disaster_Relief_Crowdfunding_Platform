@@ -64,11 +64,11 @@ const DisasterReliefCrowdfunding = () => {
   const [activeTab, setActiveTab] = useState("browse");
 
   const handleTabChange = (tab) => {
-  setActiveTab(tab);
-  const params = new URLSearchParams(searchParams);
-  params.set("tab", tab);
-  router.push(`${pathname}?${params.toString()}`, { scroll: false });
-};
+    setActiveTab(tab);
+    const params = new URLSearchParams(searchParams);
+    params.set("tab", tab);
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   useEffect(() => {
     const tabFromUrl = searchParams.get("tab");
@@ -85,8 +85,6 @@ const DisasterReliefCrowdfunding = () => {
       setActiveTab("browse");
     }
   }, [searchParams, activeTab]);
-
-  
 
   const handleShowCreateModal = (show) => {
     setShowCreateModal(show);
@@ -349,6 +347,9 @@ const DisasterReliefCrowdfunding = () => {
                 key="about"
                 isOpen={activeTab === "about"}
                 onClose={() => setActiveTab("browse")}
+                handleCreateCampaignClick={handleShowCreateModal}
+                projects={projects}
+                handleDonateClick={handleDonateClick}
               />
             )}
 

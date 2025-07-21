@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowLeft, Info, CheckCircle } from "lucide-react";
+import { X, ArrowLeft, Info, CheckCircle, Heart, Shield } from "lucide-react";
+import { IN } from "country-flag-icons/react/3x2";
 
 const DonationModal = ({ isOpen, onClose, project }) => {
   const [selectedAmount, setSelectedAmount] = useState(1000);
   const [customAmount, setCustomAmount] = useState("");
   const [isCustomMode, setIsCustomMode] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState("idle"); // idle, processing, success, error
+  const [paymentStatus, setPaymentStatus] = useState("idle");
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [paymentMessage, setPaymentMessage] = useState("");
   const [tipPercent, setTipPercent] = useState(18);
+  const [currentStep, setCurrentStep] = useState(1); // 1: amount, 2: details
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,8 +20,7 @@ const DonationModal = ({ isOpen, onClose, project }) => {
   });
 
   const modalRef = useRef(null);
-
-  const presetAmounts = [500, 1000, 1500];
+  const presetAmounts = [500, 1000, 2000, 5000];
 
   const calculateTip = () => {
     const amount = isCustomMode
@@ -52,6 +53,23 @@ const DonationModal = ({ isOpen, onClose, project }) => {
     setSelectedAmount(parseInt(value) || 0);
   };
 
+  const handleNextStep = () => {
+    const amount = isCustomMode ? parseFloat(customAmount) : selectedAmount;
+    if (!amount || amount <= 0) {
+      alert("Please select or enter a valid donation amount");
+      return;
+    }
+    if (amount < 100) {
+      alert("Minimum donation amount is ₹100");
+      return;
+    }
+    setCurrentStep(2);
+  };
+
+  const handleBackStep = () => {
+    setCurrentStep(1);
+  };
+
   // Load Razorpay script
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -71,7 +89,7 @@ const DonationModal = ({ isOpen, onClose, project }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: amount * 100, // Convert to paise
+          amount: amount * 100,
           currency: "INR",
         }),
       });
@@ -118,17 +136,15 @@ const DonationModal = ({ isOpen, onClose, project }) => {
       setPaymentStatus("processing");
       setPaymentMessage("Initializing payment...");
 
-      // Load Razorpay script
       const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) {
         throw new Error("Failed to load Razorpay script");
       }
 
-      // Create order
       const order = await createRazorpayOrder(calculateTotal());
 
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Your Razorpay Key ID
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: order.currency,
         name: "Donation Platform",
@@ -140,11 +156,10 @@ const DonationModal = ({ isOpen, onClose, project }) => {
           contact: `+91${formData.phone}`,
         },
         theme: {
-          color: "#06b6d4", // Cyan color to match your theme
+          color: "#06b6d4",
         },
         handler: async (response) => {
           try {
-            // Payment successful
             const paymentData = {
               projectId: project?.id,
               projectTitle: project?.title,
@@ -157,7 +172,6 @@ const DonationModal = ({ isOpen, onClose, project }) => {
               razorpay_signature: response.razorpay_signature,
             };
 
-            // Save to database
             await savePaymentToDatabase(paymentData, "success");
 
             setPaymentStatus("success");
@@ -177,7 +191,6 @@ const DonationModal = ({ isOpen, onClose, project }) => {
         modal: {
           ondismiss: async () => {
             try {
-              // Payment cancelled/failed
               const paymentData = {
                 projectId: project?.id,
                 projectTitle: project?.title,
@@ -221,17 +234,25 @@ const DonationModal = ({ isOpen, onClose, project }) => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  const { name, value, type, checked } = e.target;
+
+  let newValue = value;
+
+  // Only allow letters and spaces in "name" field
+  if (name === "name") {
+    newValue = newValue.replace(/[^a-zA-Z\s]/g, "");
+  }
+
+  setFormData((prev) => ({
+    ...prev,
+    [name]: type === "checkbox" ? checked : newValue,
+  }));
+};
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validation
     if (!formData.name || !formData.email || !formData.phone) {
       alert("Please fill in all required fields");
       return;
@@ -248,13 +269,11 @@ const DonationModal = ({ isOpen, onClose, project }) => {
       return;
     }
 
-    // Proceed with Razorpay payment
     handleRazorpayPayment();
   };
 
   const handleClose = () => {
     onClose();
-    // Reset form data when closing
     setFormData({
       name: "",
       email: "",
@@ -268,6 +287,7 @@ const DonationModal = ({ isOpen, onClose, project }) => {
     setPaymentStatus("idle");
     setPaymentMessage("");
     setShowSuccessPopup(false);
+    setCurrentStep(1);
   };
 
   useEffect(() => {
@@ -289,12 +309,15 @@ const DonationModal = ({ isOpen, onClose, project }) => {
   useEffect(() => {
     const handleBack = () => {
       if (isOpen) {
-        handleClose();
+        if (currentStep === 2) {
+          setCurrentStep(1);
+        } else {
+          handleClose();
+        }
       }
     };
 
     if (isOpen) {
-      // Only push state if not already modalOpen
       if (!window.history.state || !window.history.state.modalOpen) {
         window.history.pushState({ modalOpen: true }, "");
       }
@@ -303,13 +326,18 @@ const DonationModal = ({ isOpen, onClose, project }) => {
 
     return () => {
       window.removeEventListener("popstate", handleBack);
-      // Do NOT call window.history.back() here!
     };
-  }, [isOpen]);
+  }, [isOpen, currentStep]);
 
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === "Escape") handleClose();
+      if (e.key === "Escape") {
+        if (currentStep === 2) {
+          setCurrentStep(1);
+        } else {
+          handleClose();
+        }
+      }
     };
 
     if (isOpen) {
@@ -320,7 +348,7 @@ const DonationModal = ({ isOpen, onClose, project }) => {
         document.removeEventListener("keydown", handleEscape);
       };
     }
-  }, [isOpen]);
+  }, [isOpen, currentStep]);
 
   if (!isOpen) return null;
 
@@ -335,23 +363,24 @@ const DonationModal = ({ isOpen, onClose, project }) => {
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="bg-white rounded-2xl p-6 w-full max-w-md text-center shadow-xl"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
+            className="bg-white rounded-2xl p-8 w-full max-w-sm text-center shadow-xl"
+            initial={{ scale: 0.8, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.8, opacity: 0, y: 20 }}
             onClick={(e) => e.stopPropagation()}
           >
-            <CheckCircle size={48} className="text-green-500 mx-auto mb-4" />
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle size={32} className="text-green-500" />
+            </div>
             <h3 className="text-xl font-bold mb-2 text-gray-800">Thank You!</h3>
-            <p className="text-gray-600 mb-4">
-              Thank you for your donation! Your contribution will help those in
-              need.
+            <p className="text-gray-600 mb-6">
+              Your donation of <span className="font-semibold text-green-600">₹{calculateTotal()}</span> has been received successfully.
             </p>
             <button
               onClick={handleClose}
-              className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-semibold py-2 px-6 rounded-lg"
+              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 active:scale-95"
             >
-              OK
+              Continue
             </button>
           </motion.div>
         </motion.div>
@@ -360,286 +389,401 @@ const DonationModal = ({ isOpen, onClose, project }) => {
   }
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-50 flex items-center justify-center p-0 sm:p-4 overflow-y-auto"
-      onClick={handleClose}
-    >
-      <div
-        ref={modalRef}
-        className="relative flex items-start justify-center min-h-screen p-0 sm:p-4 overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 bg-black bg-opacity-50 z-50"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
       >
-        <div className="bg-white w-full max-h-[90vh] sm:rounded-2xl sm:shadow-2xl sm:max-w-md sm:mx-auto sm:my-10 overflow-y-auto transform transition-all duration-300">
-          {/* Header - Sticky on mobile */}
-          <div className="  bg-white border-b border-gray-200 p-6 sm:p-6 z-10 shadow-sm sm:shadow-none sticky top-6 sm:top-0">
-            <button
-              onClick={handleClose}
-              className="absolute left-4 sm:left-6 top-1/2 transform -translate-y-1/2 text-cyan-500 hover:bg-gray-100 rounded-full p-2 transition-colors"
-              aria-label="Close"
-            >
-              <ArrowLeft size={20} />
-            </button>
-            <h2 className="text-lg font-semibold text-gray-800 pl-8 pr-2 truncate text-center sm:text-left">
-              Support: {project?.title}
-            </h2>
+        <motion.div
+          ref={modalRef}
+          className="fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl max-h-[95vh] overflow-hidden sm:relative sm:inset-auto sm:rounded-2xl sm:max-w-md sm:mx-auto sm:my-8 sm:max-h-[90vh]"
+          initial={{ y: "100%" }}
+          animate={{ y: 0 }}
+          exit={{ y: "100%" }}
+          transition={{ type: "spring", damping: 30, stiffness: 300 }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header with Progress Indicator */}
+          <div className="sticky top-0 bg-white border-b border-gray-100 z-10">
+            {/* Progress Bar */}
+            <div className="h-1 bg-gray-100">
+              <motion.div
+                className="h-full bg-gradient-to-r from-cyan-500 to-blue-500"
+                initial={{ width: "50%" }}
+                animate={{ width: currentStep === 1 ? "50%" : "100%" }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between p-4">
+              <button
+                onClick={currentStep === 1 ? handleClose : handleBackStep}
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors active:scale-95"
+                aria-label={currentStep === 1 ? "Close" : "Back"}
+              >
+                <ArrowLeft size={20} className="text-gray-600" />
+              </button>
+              
+              <div className="text-center">
+                <h2 className="text-lg font-semibold text-gray-800">
+                  {currentStep === 1 ? "Choose Amount" : "Your Details"}
+                </h2>
+                <p className="text-xs text-gray-500">
+                  Step {currentStep} of 2
+                </p>
+              </div>
+              
+              <div className="w-10" /> {/* Spacer */}
+            </div>
           </div>
 
-          {/* Body */}
-          <div className="p-10 sm:p-6">
+          {/* Content */}
+          <div className="overflow-y-auto pb-6" style={{ maxHeight: 'calc(95vh - 120px)' }}>
             {/* Payment Status Messages */}
             {paymentStatus !== "idle" && (
-              <div
-                className={`mb-4 p-3 rounded-lg text-sm ${
+              <motion.div
+                className={`mx-4 mt-4 p-4 rounded-xl ${
                   paymentStatus === "success"
-                    ? "bg-green-50 border border-green-200 text-green-800"
+                    ? "bg-green-50 border border-green-200"
                     : paymentStatus === "processing"
-                    ? "bg-blue-50 border border-blue-200 text-blue-800"
-                    : "bg-red-50 border border-red-200 text-red-800"
+                    ? "bg-blue-50 border border-blue-200"
+                    : "bg-red-50 border border-red-200"
                 }`}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   {paymentStatus === "processing" && (
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent" />
                   )}
-                  <span className="font-medium">{paymentMessage}</span>
+                  <span className={`font-medium ${
+                    paymentStatus === "success"
+                      ? "text-green-800"
+                      : paymentStatus === "processing"
+                      ? "text-blue-800"
+                      : "text-red-800"
+                  }`}>
+                    {paymentMessage}
+                  </span>
                 </div>
-              </div>
+              </motion.div>
             )}
 
-            <div className="space-y-6">
+            <div className="px-4">
               {/* Project Info */}
               {project && (
-                <div className="bg-blue-50 rounded-lg p-3 sm:p-4">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={project.imageUrl}
-                      alt={project.title}
-                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover"
-                    />
-                    <div className="overflow-hidden">
+                <motion.div 
+                  className="mt-6 mb-6 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-4 border border-blue-100"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <img
+                        src={project.imageUrl}
+                        alt={project.title}
+                        className="w-14 h-14 rounded-xl object-cover"
+                      />
+                      
+                    </div>
+                    <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-gray-800 truncate">
                         {project.title}
                       </h3>
-                      <p className="text-xs sm:text-sm text-gray-600 truncate">
+                      <p className="text-sm text-gray-600 truncate">
                         {project.location}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Shield size={12} className="text-green-500" />
+                        <span className="text-xs text-green-600 font-medium">Verified Campaign</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {currentStep === 1 ? (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-6"
+                >
+                  {/* Contribution Info */}
+                  <div className="text-center p-4 bg-cyan-50 rounded-2xl">
+                    <p className="text-sm text-gray-600 mb-1">Most contributors donate</p>
+                    <p className="text-2xl font-bold text-cyan-600">₹1,000</p>
+                  </div>
+
+                  {/* Amount Grid - Better mobile layout */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {presetAmounts.map((amount, index) => (
+                      <motion.button
+                        key={amount}
+                        onClick={() => handleAmountSelect(amount)}
+                        disabled={paymentStatus === "processing"}
+                        className={`relative p-4 rounded-2xl font-semibold text-lg transition-all duration-200 ${
+                          selectedAmount === amount && !isCustomMode
+                            ? "bg-gradient-to-br from-cyan-500 to-blue-500 text-white shadow-lg transform scale-105"
+                            : "bg-white border-2 border-gray-200 text-gray-700 hover:border-cyan-300 active:scale-95"
+                        } ${
+                          paymentStatus === "processing"
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
+                        whileTap={{ scale: 0.95 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        ₹{amount.toLocaleString()}
+                        {selectedAmount === amount && !isCustomMode && (
+                          <motion.div
+                            className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                          >
+                            <CheckCircle size={16} className="text-cyan-500" />
+                          </motion.div>
+                        )}
+                      </motion.button>
+                    ))}
+                  </div>
+
+                  {/* Custom Amount */}
+                  <div>
+                    <motion.button
+                      onClick={handleCustomAmount}
+                      disabled={paymentStatus === "processing"}
+                      className={`w-full p-4 rounded-2xl border-2 border-dashed transition-all duration-200 ${
+                        isCustomMode
+                          ? "border-cyan-400 bg-cyan-50"
+                          : "border-gray-300 bg-white hover:border-cyan-300"
+                      } ${
+                        paymentStatus === "processing"
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <span className="text-gray-600 font-medium">
+                        {isCustomMode ? "Custom Amount Selected" : "Enter Custom Amount"}
+                      </span>
+                    </motion.button>
+                    
+                    <AnimatePresence>
+                      {isCustomMode && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="mt-3"
+                        >
+                          <div className="relative">
+                            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-xl font-bold text-gray-500">₹</span>
+                            <input
+                              type="number"
+                              value={customAmount}
+                              onChange={handleCustomAmountChange}
+                              placeholder="0"
+                              disabled={paymentStatus === "processing"}
+                              className="w-full pl-10 pr-4 py-4 text-xl font-bold border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 disabled:opacity-50 text-center"
+                              inputMode="decimal"
+                              autoFocus
+                            />
+                          </div>
+                          <p className="text-xs text-gray-500 mt-2 text-center">
+                            Minimum donation: ₹100
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Platform Fee Info */}
+                  <motion.div 
+                    className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Info size={16} className="text-emerald-600" />
+                      </div>
+                      <div className="text-sm">
+                        <p className="font-semibold text-emerald-700 mb-1">
+                          0% Platform Fee
+                        </p>
+                        <p className="text-emerald-600">
+                          We're not charging any platform fee for this campaign. Your generosity keeps us running!
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Continue Button */}
+                  <motion.button
+                    onClick={handleNextStep}
+                    disabled={paymentStatus === "processing"}
+                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold py-4 rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                    whileTap={{ scale: 0.98 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    Continue
+                  </motion.button>
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-6 mt-6"
+                >
+                  {/* Amount Summary */}
+                  <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-2xl p-4 border border-cyan-100">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-gray-600">Donation Amount</span>
+                      <span className="font-bold text-gray-800">
+                        ₹{(isCustomMode ? parseFloat(customAmount) || 0 : selectedAmount).toLocaleString()}
+                      </span>
+                    </div>
+                    
+                    {/* Tip Section */}
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-gray-600 text-sm">Support our platform</span>
+                      <select
+                        value={tipPercent}
+                        onChange={(e) => setTipPercent(parseInt(e.target.value))}
+                        disabled={paymentStatus === "processing"}
+                        className="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:opacity-50 bg-white"
+                      >
+                        <option value={18}>18% (₹{calculateTip()})</option>
+                        <option value={15}>15% (₹{Math.round(((isCustomMode ? parseFloat(customAmount) || 0 : selectedAmount) * 15) / 100)})</option>
+                        <option value={10}>10% (₹{Math.round(((isCustomMode ? parseFloat(customAmount) || 0 : selectedAmount) * 10) / 100)})</option>
+                        <option value={5}>5% (₹{Math.round(((isCustomMode ? parseFloat(customAmount) || 0 : selectedAmount) * 5) / 100)})</option>
+                        <option value={0}>No tip</option>
+                      </select>
+                    </div>
+                    
+                    <div className="border-t border-cyan-200 pt-3">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-gray-800">Total Amount</span>
+                        <span className="text-2xl font-bold text-cyan-600">
+                          ₹{calculateTotal().toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Form Fields */}
+                  <div className="space-y-4">
+                    <div>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder="Full Name *"
+                        disabled={paymentStatus === "processing"}
+                        className="w-full px-4 py-4 text-base border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 disabled:opacity-50 transition-all"
+                      />
+                    </div>
+
+                    <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-2xl">
+                      <input
+                        type="checkbox"
+                        id="anonymous"
+                        name="isAnonymous"
+                        checked={formData.isAnonymous}
+                        onChange={handleInputChange}
+                        disabled={paymentStatus === "processing"}
+                        className="mt-1 w-5 h-5 text-cyan-500 border-2 border-gray-300 rounded focus:ring-cyan-500 disabled:opacity-50"
+                      />
+                      <label htmlFor="anonymous" className="text-sm text-gray-700 font-medium">
+                        Keep my donation anonymous
+                      </label>
+                    </div>
+
+                    <div>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        placeholder="Email Address *"
+                        disabled={paymentStatus === "processing"}
+                        className="w-full px-4 py-4 text-base border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 disabled:opacity-50 transition-all"
+                        inputMode="email"
+                      />
+                    </div>
+
+                    <div>
+                      <div className="flex gap-3">
+                        <div className="flex items-center gap-2 px-4 py-4 border-2 border-gray-200 rounded-2xl bg-gray-50 min-w-[80px]">
+                          <div className="w-5 h-4  rounded-sm">
+                            <IN className="w-5 h-4" />
+                          </div>
+                          <span className="font-medium text-gray-700">+91</span>
+                        </div>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          placeholder="Mobile Number *"
+                          disabled={paymentStatus === "processing"}
+                          className="flex-1 px-4 py-4 text-base border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 disabled:opacity-50 transition-all"
+                          inputMode="tel"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2 px-1">
+                        Payment updates will be sent to this number
+                      </p>
+                    </div>
+
+                    {/* Payment Button */}
+                    <motion.button
+                      onClick={handleSubmit}
+                      disabled={paymentStatus === "processing"}
+                      className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-5 rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg mt-6"
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      {paymentStatus === "processing" ? (
+                        <div className="flex items-center justify-center gap-3">
+                          <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"></div>
+                          <span>Processing Payment...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center gap-2">
+                          <Shield size={20} />
+                          <span>Secure Payment • ₹{calculateTotal().toLocaleString()}</span>
+                        </div>
+                      )}
+                    </motion.button>
+
+                    {/* Security Info */}
+                    <div className="text-center pt-4">
+                      <p className="text-xs text-gray-500 flex items-center justify-center gap-2">
+                        <Shield size={12} className="text-green-500" />
+                        Your payment is secured with Razorpay
                       </p>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               )}
-
-              {/* Contribution Info */}
-              <div className="text-center text-gray-600 text-xs sm:text-sm">
-                Most contributors donate approx{" "}
-                <span className="text-cyan-500 font-semibold">₹1000</span>
-              </div>
-
-              {/* Amount Options - Improved mobile layout */}
-              <div className="flex flex-wrap gap-2 justify-center mb-4">
-                {presetAmounts.map((amount) => (
-                  <button
-                    key={amount}
-                    onClick={() => handleAmountSelect(amount)}
-                    disabled={paymentStatus === "processing"}
-                    className={`min-w-[70px] sm:min-w-[80px] px-3 py-2 sm:px-4 sm:py-2 rounded-full font-medium text-sm sm:text-base transition-all duration-200 ${
-                      selectedAmount === amount && !isCustomMode
-                        ? "bg-cyan-500 text-white shadow-lg"
-                        : "bg-white border border-gray-300 text-gray-700 hover:border-cyan-500"
-                    } ${
-                      paymentStatus === "processing"
-                        ? "opacity-50 cursor-not-allowed"
-                        : ""
-                    }`}
-                  >
-                    ₹{amount}
-                  </button>
-                ))}
-              </div>
-
-              {/* Other Amount - Mobile optimized */}
-              <div className="text-center mb-4">
-                <button
-                  onClick={handleCustomAmount}
-                  disabled={paymentStatus === "processing"}
-                  className={`w-full max-w-xs mx-auto px-4 py-3 rounded-lg bg-white border border-gray-300 text-gray-600 hover:border-cyan-500 transition-colors text-sm sm:text-base ${
-                    paymentStatus === "processing"
-                      ? "opacity-50 cursor-not-allowed"
-                      : ""
-                  }`}
-                >
-                  Other Amount
-                </button>
-                {isCustomMode && (
-                  <div className="mt-3">
-                    <input
-                      type="number"
-                      value={customAmount}
-                      onChange={handleCustomAmountChange}
-                      placeholder="Enter amount"
-                      disabled={paymentStatus === "processing"}
-                      className="w-full text-base px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:opacity-50"
-                      inputMode="decimal"
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Platform Fee Info */}
-              <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-3 sm:p-4 mb-4">
-                <div className="flex items-start gap-2">
-                  <Info
-                    size={18}
-                    className="text-cyan-600 mt-0.5 flex-shrink-0"
-                  />
-                  <div className="text-xs sm:text-sm">
-                    <div className="font-bold text-cyan-700">
-                      Platform is charging 0% platform fee* for this fundraiser,
-                      relying solely on the generosity of contributors like you.
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tip Section - Stacked on mobile */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
-                <span className="text-gray-700 text-sm">
-                  Support us with a tip:
-                </span>
-                <select
-                  value={tipPercent}
-                  onChange={(e) => setTipPercent(parseInt(e.target.value))}
-                  disabled={paymentStatus === "processing"}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:opacity-50"
-                >
-                  <option value={15}>
-                    15% (₹
-                    {Math.round(
-                      ((isCustomMode
-                        ? parseFloat(customAmount) || 0
-                        : selectedAmount) *
-                        15) /
-                        100
-                    )}
-                    )
-                  </option>
-                  <option value={10}>
-                    10% (₹
-                    {Math.round(
-                      ((isCustomMode
-                        ? parseFloat(customAmount) || 0
-                        : selectedAmount) *
-                        10) /
-                        100
-                    )}
-                    )
-                  </option>
-                  <option value={5}>
-                    5% (₹
-                    {Math.round(
-                      ((isCustomMode
-                        ? parseFloat(customAmount) || 0
-                        : selectedAmount) *
-                        5) /
-                        100
-                    )}
-                    )
-                  </option>
-                  <option value={0}>No tip</option>
-                </select>
-              </div>
-
-              {/* Total Amount - More prominent */}
-              <div className="text-center font-bold text-gray-800 mb-5 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <div className="text-sm text-gray-600">Total Amount</div>
-                <div className="text-xl text-cyan-600">
-                  ₹ {calculateTotal()}
-                </div>
-              </div>
-
-              {/* Form Fields */}
-              <div className="space-y-4">
-                <div>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    placeholder="Full Name *"
-                    disabled={paymentStatus === "processing"}
-                    className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:opacity-50"
-                  />
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <input
-                    type="checkbox"
-                    id="anonymous"
-                    name="isAnonymous"
-                    checked={formData.isAnonymous}
-                    onChange={handleInputChange}
-                    disabled={paymentStatus === "processing"}
-                    className="mt-1 w-4 h-4 text-cyan-500 border-gray-300 rounded focus:ring-cyan-500 disabled:opacity-50"
-                  />
-                  <label htmlFor="anonymous" className="text-sm text-gray-700">
-                    Make my contribution anonymous
-                  </label>
-                </div>
-
-                <div>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="Email Address *"
-                    disabled={paymentStatus === "processing"}
-                    className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:opacity-50"
-                    inputMode="email"
-                  />
-                </div>
-
-                <div>
-                  <div className="flex gap-2">
-                    <div className="flex items-center gap-1 px-3 py-3 border border-gray-300 rounded-lg bg-gray-50">
-                      <div className="w-4 h-3 bg-gradient-to-b from-orange-400 via-white to-green-500 rounded-sm"></div>
-                      <span className="text-sm font-medium">+91</span>
-                    </div>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="Mobile Number *"
-                      disabled={paymentStatus === "processing"}
-                      className="flex-1 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:opacity-50"
-                      inputMode="tel"
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-2">
-                    Payment updates will be sent to this number
-                  </p>
-                </div>
-
-                <button
-                  onClick={handleSubmit}
-                  disabled={paymentStatus === "processing"}
-                  className="w-full bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-semibold py-4 rounded-lg transition-all duration-300 mt-4 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
-                >
-                  {paymentStatus === "processing" ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                      Processing...
-                    </div>
-                  ) : (
-                    "Proceed to Payment"
-                  )}
-                </button>
-              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+
+          {/* Bottom Safe Area for iOS */}
+          <div className="h-safe-area-inset-bottom bg-white"></div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
